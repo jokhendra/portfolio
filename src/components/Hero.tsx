@@ -14,7 +14,7 @@ export default function Hero() {
 
   const handleDownloadCV = () => {
     // Replace with your actual CV file path
-    window.open('/path-to-your-cv.pdf', '_blank');
+    window.open('https://www.dropbox.com/scl/fi/e710kdfn08r3zf8kzwacl/Jokhendra-Prajapati.pdf?rlkey=6kqrd0rwgw84aw8ssjjbiax8i&st=kb00roru&dl=0', '_blank');
   };
 
   return (

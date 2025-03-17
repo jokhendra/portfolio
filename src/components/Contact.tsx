@@ -99,10 +99,10 @@ export default function Contact() {
                   Email
                 </h3>
                 <a 
-                  href="mailto:your.email@example.com"
+                  href="mailto:jokhendra.dev@gmail.com"
                   className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  your.email@example.com
+                  jokhendra.dev@gmail.com
                 </a>
               </div>
             </div>
@@ -113,10 +113,10 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                  Location
+                  Bhopal
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Your City, Country
+                  Madhya Pradesh, India
                 </p>
               </div>
             </div>
@@ -124,7 +124,7 @@ export default function Contact() {
             {/* Social Links */}
             <div className="flex gap-4">
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/jokhendra"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -134,7 +134,7 @@ export default function Contact() {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com/in/yourusername"
+                href="https://www.linkedin.com/in/jokhendra-prajapati-560a841aa/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
