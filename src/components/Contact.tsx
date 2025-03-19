@@ -65,7 +65,7 @@ export default function Contact() {
 
   return (
     <section id="contact" className="py-20 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -99,10 +99,10 @@ export default function Contact() {
                   Email
                 </h3>
                 <a 
-                  href="mailto:jokhendra.dev@gmail.com"
+                  href="mailto:jokhendra.dev@outlook.com"
                   className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  jokhendra.dev@gmail.com
+                  jokhendra.dev@outlook.com
                 </a>
               </div>
             </div>

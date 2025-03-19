@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CodeBracketIcon, 
   ServerIcon, 
@@ -18,103 +18,283 @@ import {
   CurrencyDollarIcon,
   UserGroupIcon,
   DocumentTextIcon,
-  AcademicCapIcon
+  AcademicCapIcon,
+  XMarkIcon,
+  ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
-const projects = [
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  liveUrl: string;
+  githubUrl: string;
+  category: string;
+  features: string[];
+  challenges: string[];
+  solutions: string[];
+}
+
+const projects: Project[] = [
   {
-    title: "AI-Powered Chat Application",
-    description: "A real-time chat application with AI-powered message suggestions and sentiment analysis.",
-    image: "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["React", "Node.js", "TensorFlow", "Socket.io"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "ai"
+    "id": 1,
+    "title": "Hybrid RAG Chat Application",
+    "description": "An advanced chat application leveraging Retrieval-Augmented Generation (RAG) to provide intelligent responses based on website content. Users can input a website link and ask questions related to its content, with real-time AI-driven insights.",
+    "image": "https://i.ytimg.com/vi/r2m9DbEmeqI/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBxev6gEP3QDs9PujkAKnGrG5C-Eg",
+    "technologies": ["Python", "LangChain", "FAISS", "BM25", "Groq API", "FastAPI", "Streamlit"],
+    "liveUrl": "https://hybrid-rag-chat.vercel.app",
+    "githubUrl": "https://github.com/yourusername/hybrid-rag-chat",
+    "category": "AI/ML",
+    "features": [
+      "Website-based context-aware AI responses",
+      "Real-time messaging with WebSocket",
+      "Code syntax highlighting",
+      "Markdown support",
+      "Dark mode",
+      "Responsive design"
+    ],
+    "challenges": [
+      "Efficient retrieval and processing of website content",
+      "Managing AI response latency for large web pages",
+      "Handling diverse website structures",
+      "Ensuring data security and privacy"
+    ],
+    "solutions": [
+      "Used FAISS & BM25 for efficient document retrieval",
+      "Implemented caching and response optimization",
+      "Developed a robust HTML parsing and content extraction pipeline",
+      "Applied end-to-end encryption for secure interactions"
+    ]
   },
+
   {
+    id: 2,
     title: "E-Commerce Platform",
-    description: "A full-featured e-commerce platform with real-time inventory management and payment processing.",
-    image: "https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["Next.js", "MongoDB", "Stripe", "Redux"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "frontend"
+    description: "A full-featured e-commerce platform with product management, shopping cart, and payment integration.",
+    image: "https://picsum.photos/seed/ecommerce/600/400",
+    technologies: ["React", "Node.js", "MongoDB", "Stripe"],
+    liveUrl: "https://ecommerce-demo.vercel.app",
+    githubUrl: "https://github.com/yourusername/ecommerce",
+    category: "frontend",
+    features: [
+      "Product catalog",
+      "Shopping cart",
+      "User authentication",
+      "Payment processing",
+      "Admin dashboard"
+    ],
+    challenges: [
+      "Optimizing search performance",
+      "Managing inventory in real-time",
+      "Handling concurrent transactions",
+      "Implementing complex filtering"
+    ],
+    solutions: [
+      "Used Elasticsearch for fast search",
+      "Implemented Redis for caching",
+      "Adopted optimistic locking",
+      "Created efficient database indexes"
+    ]
   },
   {
-    title: "Cloud Infrastructure Dashboard",
-    description: "A comprehensive dashboard for monitoring and managing cloud resources across multiple providers.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["AWS", "Docker", "Kubernetes", "Grafana"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "devops"
+    id: 3,
+    title: "Cloud Dashboard",
+    description: "A comprehensive cloud resource management dashboard with real-time monitoring and analytics.",
+    image: "https://picsum.photos/seed/cloud-dash/600/400",
+    technologies: ["Vue.js", "AWS SDK", "Chart.js", "Tailwind CSS"],
+    liveUrl: "https://cloud-dashboard-demo.vercel.app",
+    githubUrl: "https://github.com/yourusername/cloud-dashboard",
+    category: "frontend",
+    features: [
+      "Resource monitoring",
+      "Cost analytics",
+      "Performance metrics",
+      "Alert system",
+      "Custom reports"
+    ],
+    challenges: [
+      "Integrating multiple cloud APIs",
+      "Handling different data formats",
+      "Managing API rate limits",
+      "Ensuring real-time updates"
+    ],
+    solutions: [
+      "Created unified API abstraction layer",
+      "Implemented data normalization",
+      "Used queue system for API calls",
+      "Adopted WebSocket for live updates"
+    ]
   },
   {
-    title: "Machine Learning Model Training Platform",
-    description: "A platform for training and deploying machine learning models with automated hyperparameter tuning.",
-    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["Python", "PyTorch", "FastAPI", "Docker"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "ai"
+    id: 4,
+    title: "Machine Learning Platform",
+    description: "An interactive platform for training and deploying machine learning models with visualization tools.",
+    image: "https://picsum.photos/seed/ml-platform/600/400",
+    technologies: ["Python", "TensorFlow", "React", "D3.js"],
+    liveUrl: "https://ml-platform-demo.vercel.app",
+    githubUrl: "https://github.com/yourusername/ml-platform",
+    category: "ai-ml",
+    features: [
+      "Model training interface",
+      "Data visualization",
+      "Model deployment",
+      "Performance metrics",
+      "API integration"
+    ],
+    challenges: [
+      "Managing computational resources",
+      "Optimizing training performance",
+      "Handling large datasets",
+      "Ensuring reproducibility"
+    ],
+    solutions: [
+      "Implemented resource scheduling",
+      "Used distributed training",
+      "Optimized data pipeline",
+      "Added experiment tracking"
+    ]
   },
   {
-    title: "Social Media Analytics Dashboard",
-    description: "Real-time analytics dashboard for social media metrics with predictive trend analysis.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["React", "D3.js", "Node.js", "MongoDB"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "frontend"
+    id: 5,
+    title: "Analytics Dashboard",
+    description: "A powerful analytics dashboard with interactive charts and real-time data updates.",
+    image: "https://picsum.photos/seed/analytics/600/400",
+    technologies: ["Next.js", "D3.js", "Firebase", "Tailwind CSS"],
+    liveUrl: "https://analytics-dashboard-demo.vercel.app",
+    githubUrl: "https://github.com/yourusername/analytics-dashboard",
+    category: "frontend",
+    features: [
+      "Interactive charts",
+      "Real-time updates",
+      "Custom reports",
+      "Data export",
+      "User management"
+    ],
+    challenges: [
+      "Processing real-time data",
+      "Visualizing complex metrics",
+      "Integrating multiple APIs",
+      "Ensuring data accuracy"
+    ],
+    solutions: [
+      "Used WebSocket for live updates",
+      "Implemented D3.js for visualization",
+      "Created unified API layer",
+      "Added data validation"
+    ]
   },
   {
+    id: 6,
     title: "Microservices Architecture",
-    description: "A scalable microservices architecture with service discovery and load balancing.",
-    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["Spring Boot", "Docker", "Kubernetes", "gRPC"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "backend"
+    description: "A scalable microservices architecture with containerization and service discovery.",
+    image: "https://picsum.photos/seed/microservices/600/400",
+    technologies: ["Docker", "Kubernetes", "Node.js", "MongoDB"],
+    liveUrl: "https://microservices-demo.vercel.app",
+    githubUrl: "https://github.com/yourusername/microservices",
+    category: "backend",
+    features: [
+      "Service discovery",
+      "Load balancing",
+      "Container orchestration",
+      "Health monitoring",
+      "Logging system"
+    ],
+    challenges: [
+      "Service communication",
+      "Data consistency",
+      "Deployment complexity",
+      "Monitoring and debugging"
+    ],
+    solutions: [
+      "Used gRPC for communication",
+      "Implemented event sourcing",
+      "Adopted GitOps practices",
+      "Added observability tools"
+    ]
   },
   {
-    title: "Cybersecurity Monitoring System",
-    description: "Real-time security monitoring system with threat detection and automated response.",
-    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["Python", "Elasticsearch", "Kibana", "Snort"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "security"
+    id: 7,
+    title: "Security System",
+    description: "A comprehensive security system with real-time threat detection and monitoring.",
+    image: "https://picsum.photos/seed/security/600/400",
+    technologies: ["Python", "TensorFlow", "React", "WebSocket"],
+    liveUrl: "https://security-system-demo.vercel.app",
+    githubUrl: "https://github.com/yourusername/security-system",
+    category: "security",
+    features: [
+      "Threat detection",
+      "Real-time monitoring",
+      "Alert system",
+      "Incident response",
+      "Security reports"
+    ],
+    challenges: [
+      "Processing security events",
+      "Reducing false positives",
+      "Ensuring system security",
+      "Managing alerts"
+    ],
+    solutions: [
+      "Used ML for threat detection",
+      "Implemented alert correlation",
+      "Added security controls",
+      "Created alert prioritization"
+    ]
   },
   {
-    title: "Cloud-Native Application",
-    description: "A cloud-native application built with serverless architecture and event-driven design.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    technologies: ["AWS Lambda", "DynamoDB", "SQS", "CloudWatch"],
-    liveUrl: "#",
-    githubUrl: "#",
-    category: "cloud"
+    id: 8,
+    title: "Cloud Native Application",
+    description: "A modern cloud-native application built with microservices and serverless architecture.",
+    image: "https://picsum.photos/seed/cloud-native/600/400",
+    technologies: ["AWS Lambda", "React", "DynamoDB", "API Gateway"],
+    liveUrl: "https://cloud-native-demo.vercel.app",
+    githubUrl: "https://github.com/yourusername/cloud-native",
+    category: "cloud",
+    features: [
+      "Serverless functions",
+      "API integration",
+      "Data persistence",
+      "Scalability",
+      "Monitoring"
+    ],
+    challenges: [
+      "Cold start latency",
+      "State management",
+      "Cost control",
+      "Monitoring"
+    ],
+    solutions: [
+      "Used provisioned concurrency",
+      "Implemented distributed caching",
+      "Added cost monitoring",
+      "Created comprehensive logging"
+    ]
   }
 ];
 
 const categories = [
-  { id: 'all', name: 'All Projects', icon: CodeBracketIcon },
-  { id: 'frontend', name: 'Frontend', icon: CommandLineIcon },
-  { id: 'backend', name: 'Backend', icon: ServerIcon },
-  { id: 'ai', name: 'AI/ML', icon: CpuChipIcon },
-  { id: 'devops', name: 'DevOps', icon: CloudIcon },
-  { id: 'security', name: 'Security', icon: ShieldCheckIcon }
+  { id: 'all', name: 'All Projects' },
+  { id: 'frontend', name: 'Frontend' },
+  { id: 'backend', name: 'Backend' },
+  { id: 'ai-ml', name: 'AI/ML' },
+  { id: 'security', name: 'Security' },
+  { id: 'cloud', name: 'Cloud' }
 ];
 
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const filteredProjects = activeCategory === 'all'
     ? projects
     : projects.filter(project => project.category === activeCategory);
 
   return (
-    <section id="projects" className="py-20 bg-gray-50 dark:bg-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="projects" className="bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -126,7 +306,7 @@ export default function Projects() {
             Featured Projects
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Explore some of my recent work and personal projects
+            A collection of my recent work showcasing my skills and expertise
           </p>
         </motion.div>
 
@@ -142,102 +322,193 @@ export default function Projects() {
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`px-6 py-2 rounded-full transition-all duration-300 ${
                 activeCategory === category.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-md'
               }`}
             >
-              <category.icon className="w-5 h-5" />
               {category.name}
             </button>
           ))}
         </motion.div>
 
         {/* Projects Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {filteredProjects.map((project, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProjects.map((project) => (
             <motion.div
-              key={project.title}
+              key={project.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200/20 dark:border-gray-700/20 flex flex-col"
+              transition={{ duration: 0.5 }}
+              className="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100/50 dark:border-gray-700/50 hover:border-blue-500/30 dark:hover:border-blue-400/30"
+              onClick={() => setSelectedProject(project)}
             >
-              {/* Project Image */}
-              <div className="relative h-56 overflow-hidden">
-                <img
+              <div className="relative h-64 overflow-hidden">
+                <Image
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  fill
+                  className="object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                  <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
-                  <p className="text-gray-200 text-sm line-clamp-2">{project.description}</p>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
-
-              {/* Project Content */}
-              <div className="p-6 flex flex-col flex-grow">
-                {/* Technologies */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.technologies.map((tech) => (
+              <div className="p-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent group-hover:from-blue-600 group-hover:to-blue-400 dark:group-hover:from-blue-400 dark:group-hover:to-blue-300 transition-all duration-300">
+                    {project.title}
+                  </h3>
+                  <span className="px-4 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium whitespace-nowrap">
+                    {project.category === 'ai-ml' ? 'AI/ML' : project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+                  </span>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2 text-lg">
+                  {project.description}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.slice(0, 3).map((tech) => (
                     <span
                       key={tech}
-                      className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium"
+                      className="px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-medium shadow-sm"
                     >
                       {tech}
                     </span>
                   ))}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200/20 dark:border-gray-700/20">
-                  <a
-                    href={project.liveUrl}
-                    className="group flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                  >
-                    <span className="relative">
-                      <span className="absolute -inset-1 bg-blue-100 dark:bg-blue-900/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <span className="relative flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        View Demo
-                      </span>
+                  {project.technologies.length > 3 && (
+                    <span className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 text-gray-600 dark:text-gray-300 rounded-xl text-sm shadow-sm">
+                      +{project.technologies.length - 3} more
                     </span>
-                  </a>
-                  <a
-                    href={project.githubUrl}
-                    className="group flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
-                  >
-                    <span className="relative">
-                      <span className="absolute -inset-1 bg-gray-100 dark:bg-gray-700 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <span className="relative flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-                        </svg>
-                        Source Code
-                      </span>
-                    </span>
-                  </a>
+                  )}
                 </div>
               </div>
-
-              {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
+
+      {/* Project Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative h-64">
+                <Image
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
+                  fill
+                  className="object-cover rounded-t-2xl"
+                />
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="absolute top-4 right-4 p-2 bg-white dark:bg-gray-800 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <XMarkIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+                </button>
+              </div>
+
+              <div className="p-6">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                  {selectedProject.title}
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+                  {selectedProject.description}
+                </p>
+
+                <div className="flex gap-4 mb-6">
+                  <a
+                    href={selectedProject.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <ArrowTopRightOnSquareIcon className="w-5 h-5" />
+                    Live Demo
+                  </a>
+                  <a
+                    href={selectedProject.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    <CodeBracketIcon className="w-5 h-5" />
+                    View Code
+                  </a>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                      Key Features
+                    </h3>
+                    <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+                      {selectedProject.features.map((feature, index) => (
+                        <li key={index}>{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                      Challenges & Solutions
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+                          Challenges
+                        </h4>
+                        <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+                          {selectedProject.challenges.map((challenge, index) => (
+                            <li key={index}>{challenge}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+                          Solutions
+                        </h4>
+                        <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+                          {selectedProject.solutions.map((solution, index) => (
+                            <li key={index}>{solution}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                      Technologies Used
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.technologies.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 } 

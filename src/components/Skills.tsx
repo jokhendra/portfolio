@@ -19,6 +19,7 @@ import {
 const categories = [
   { id: 'frontend', name: 'Frontend', icon: CodeBracketIcon, color: 'from-blue-500 to-cyan-500' },
   { id: 'backend', name: 'Backend', icon: ServerIcon, color: 'from-purple-500 to-pink-500' },
+  { id: 'frameworks', name: 'Frameworks', icon: CodeBracketIcon, color: 'from-blue-500 to-cyan-500'},
   { id: 'ai-ml', name: 'AI/ML', icon: CpuChipIcon, color: 'from-orange-500 to-red-500' },
   { id: 'devops', name: 'DevOps', icon: CloudArrowUpIcon, color: 'from-green-500 to-emerald-500' },
   { id: 'cloud', name: 'Cloud', icon: CloudIcon, color: 'from-indigo-500 to-blue-500' },
@@ -41,6 +42,14 @@ const skills = {
     { name: 'SQL', level: 85 },
     { name: 'MongoDB', level: 80 },
     { name: 'Redis', level: 75 },
+  ],
+  frameworks: [
+    { name: 'Express.Js', level: 95 },
+    { name: 'Laravel', level: 65 },
+    { name: 'Django', level: 75 },
+    { name: 'LangChain', level: 60 },
+    { name: 'MediaSoup', level: 70 },
+    { name: 'Socket.io', level: 75 },
   ],
   'ai-ml': [
     { name: 'TensorFlow', level: 75 },
@@ -80,8 +89,8 @@ export default function Skills() {
   const [activeCategory, setActiveCategory] = useState('frontend');
 
   return (
-    <section id="skills" className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="skills" className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

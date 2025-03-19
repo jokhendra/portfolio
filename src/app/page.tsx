@@ -11,10 +11,20 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
       <Navbar />
       <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Contact />
+      <main className="flex-grow">
+        <section id="about">
+          <About />
+        </section>
+        <section id="skills">
+          <Skills />
+        </section>
+        <section id="projects">
+          <Projects />
+        </section>
+        <section id="contact">
+          <Contact />
+        </section>
+      </main>
       <Chatbot />
     </main>
   )

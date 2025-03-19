@@ -9,6 +9,7 @@ import {
   MoonIcon,
   ChevronDownIcon
 } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 const navItems = [
   { name: 'Home', href: '#home' },
@@ -93,6 +94,21 @@ export default function Navbar() {
     localStorage.setItem('theme', newTheme ? 'dark' : 'light');
   };
 
+  const handleNavClick = (section: string) => {
+    setIsOpen(false);
+    const element = document.getElementById(section);
+    if (element) {
+      const offset = 80; // Adjust this value based on your navbar height
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -111,14 +127,14 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             className="flex-shrink-0"
           >
-            <a 
+            <Link 
               href="#home" 
               className={`text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text ${
                 activeSection === 'home' ? 'text-blue-500' : ''
               }`}
             >
               JP
-            </a>
+            </Link>
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -197,7 +213,10 @@ export default function Navbar() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    handleNavClick(item.href.slice(1));
+                    setIsOpen(false);
+                  }}
                   className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     activeSection === item.href.slice(1)
                       ? 'bg-blue-600/20 text-blue-500'
