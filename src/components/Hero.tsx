@@ -64,7 +64,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Hi, I'm <span className="text-blue-600 dark:text-blue-400">Jokhendra Prajapti</span>
+            Hi, I'm <span className="text-blue-600 dark:text-blue-400">Jokhendra Prajapati</span>
           </motion.h1>
           
           <motion.h2 

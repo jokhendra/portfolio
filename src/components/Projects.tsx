@@ -23,285 +23,10 @@ import {
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { Project } from '../types/project';
+import { projects, categories } from '../data/projects';
 
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  technologies: string[];
-  liveUrl: string;
-  githubUrl: string;
-  category: string;
-  features: string[];
-  challenges: string[];
-  solutions: string[];
-}
 
-const projects: Project[] = [
-  {
-    "id": 1,
-    "title": "Hybrid RAG Chat Application",
-    "description": "An advanced chat application leveraging Retrieval-Augmented Generation (RAG) to provide intelligent responses based on website content. Users can input a website link and ask questions related to its content, with real-time AI-driven insights.",
-    "image": "https://i.ytimg.com/vi/r2m9DbEmeqI/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBxev6gEP3QDs9PujkAKnGrG5C-Eg",
-    "technologies": ["Python", "LangChain", "FAISS", "BM25", "Groq API", "FastAPI", "Streamlit"],
-    "liveUrl": "https://hybrid-rag-chat.vercel.app",
-    "githubUrl": "https://github.com/yourusername/hybrid-rag-chat",
-    "category": "AI/ML",
-    "features": [
-      "Website-based context-aware AI responses",
-      "Real-time messaging with WebSocket",
-      "Code syntax highlighting",
-      "Markdown support",
-      "Dark mode",
-      "Responsive design"
-    ],
-    "challenges": [
-      "Efficient retrieval and processing of website content",
-      "Managing AI response latency for large web pages",
-      "Handling diverse website structures",
-      "Ensuring data security and privacy"
-    ],
-    "solutions": [
-      "Used FAISS & BM25 for efficient document retrieval",
-      "Implemented caching and response optimization",
-      "Developed a robust HTML parsing and content extraction pipeline",
-      "Applied end-to-end encryption for secure interactions"
-    ]
-  },
-
-  {
-    id: 2,
-    title: "Solar Energy Savings and Efficiency Assistant",
-    description: "Developed an AI-powered conversational assistant using LangChain, Groq, and Python to help users calculate potential savings, estimate carbon footprint reduction, and find local solar installers. The assistant leverages tools like Tavily Search for real-time data and integrates with a local SQLite database for feedback collection.",
-    image: "https://picsum.photos/seed/ecommerce/600/400",
-    technologies: ["LangChain", "Groq", "Python", "SQLite", "Tavily Search", "Matplotlib "],
-    liveUrl: "https://ecommerce-demo.vercel.app",
-    githubUrl: "https://github.com/yourusername/ecommerce",
-    category: "AI/ML",
-    features: [
-      "Savings Calculation",
-      "Carbon Footprint Estimation",
-      "Local Installer Search",
-      "Government Incentives",
-      "Real-Time Data",
-      "Feedback Collection"
-    ],
-    challenges: [
-      "Handling incomplete or ambiguous user inputs",
-      "Fetching and processing real-time data from external APIs",
-      "Dynamically selecting and invoking the right tool based on user queries",
-      "Generating and visualizing data (e.g., savings charts) efficiently",
-      "Collecting and storing user feedback reliably",
-      "Managing tool execution errors gracefully",
-      "Ensuring scalability and extensibility for future tools"
-  ],
-  solutions: [
-      "Implemented prompt engineering and validation checks to guide users toward providing complete inputs",
-      "Integrated Tavily Search API with fallback mechanisms and caching for reliable real-time data",
-      "Used LangChain's ToolNode and conditional edges to route queries to the appropriate tool",
-      "Leveraged Matplotlib to generate on-the-fly savings charts and optimized performance for dynamic visualizations",
-      "Built a lightweight SQLite database to store user feedback with a simple schema",
-      "Developed a centralized error-handling mechanism using RunnableLambda and ToolNode.with_fallbacks",
-      "Designed a modular architecture with standalone tools and LangGraph for state management"
-  ]
-  },
-  {
-    id: 3,
-    title: "WhatsApp Chat Analyzer: Data visualization & sentiment analysis.",
-    description: "This is a comprehensive WhatsApp chat analysis tool built as a web application that allows users to upload their WhatsApp chat exports and gain insights through various analytical visualizations and metrics.",
-    image: "https://picsum.photos/seed/cloud-dash/600/400",
-    technologies: ["Python", "Streamlit", "Pandas", "Matplotlib & Seaborn","Natural Language Processing","Topic Modeling","Regular Expressions"],
-    liveUrl: "https://cloud-dashboard-demo.vercel.app",
-    githubUrl: "https://github.com/yourusername/cloud-dashboard",
-    category: "AI/ML",
-    features: [
-      "Chat Preprocessing : Converts raw WhatsApp chat exports into structured data",
-      "User-specific Analysis : Filter analysis by individual users or view overall statistics",
-      "Message Statistics : Total messages, word count, media messages, and link sharing analysis",
-      "Temporal Analysis : Message frequency by month, day, and time period",
-      "Emoji Analysis : Tracks and visualizes emoji usage patterns",
-      "Sentiment Analysis : Categorizes messages as positive, negative, or neutral",
-      "Response Time Analysis : Measures conversation engagement through response times",
-      "Message Length Analysis : Identifies users with the longest/shortest messages",
-      "Topic Modeling : Identifies key topics and themes in the chat",
-      "Word Cloud Generation : Visualizes the most frequently used words",
-      "Interactive Visualizations : Provides interactive charts and graphs for better insights"
-    ],
-    challenges: [
-      "Processing diverse WhatsApp chat formats and handling different date formats",
-      "Filtering out irrelevant content like system notifications and media placeholders",
-      "Handling multilingual conversations with mixed languages",
-      "Visualizing temporal trends in an intuitive way",
-      "Accurate sentiment analysis of informal chat messages",
-      "Extracting meaningful topics from casual conversations",
-      "Creating an intuitive user interface for non-technical users"
-    ],
-    solutions: [
-      "Implemented robust regex patterns for message extraction and standardized date parsing",
-      "Created specific filters to identify and handle non-message content",
-      `Implemented custom stop word filtering with support for "Hinglish" (Hindi-English mix)`,
-      "Developed interactive time-based visualizations with adjustable granularity (daily/weekly/monthly)",
-      "Implemented a specialized sentiment analyzer tuned for conversational text",
-      "Applied LDA topic modeling with customizable topic numbers and visualization",
-      "Designed a streamlined Streamlit interface with clear sections and interactive filters"
-    ]
-  },
-  {
-    id: 4,
-    title: "Machine Learning Platform",
-    description: "An interactive platform for training and deploying machine learning models with visualization tools.",
-    image: "https://picsum.photos/seed/ml-platform/600/400",
-    technologies: ["Python", "TensorFlow", "React", "D3.js"],
-    liveUrl: "https://ml-platform-demo.vercel.app",
-    githubUrl: "https://github.com/yourusername/ml-platform",
-    category: "ai-ml",
-    features: [
-      "Model training interface",
-      "Data visualization",
-      "Model deployment",
-      "Performance metrics",
-      "API integration"
-    ],
-    challenges: [
-      "Managing computational resources",
-      "Optimizing training performance",
-      "Handling large datasets",
-      "Ensuring reproducibility"
-    ],
-    solutions: [
-      "Implemented resource scheduling",
-      "Used distributed training",
-      "Optimized data pipeline",
-      "Added experiment tracking"
-    ]
-  },
-  {
-    id: 5,
-    title: "Analytics Dashboard",
-    description: "A powerful analytics dashboard with interactive charts and real-time data updates.",
-    image: "https://picsum.photos/seed/analytics/600/400",
-    technologies: ["Next.js", "D3.js", "Firebase", "Tailwind CSS"],
-    liveUrl: "https://analytics-dashboard-demo.vercel.app",
-    githubUrl: "https://github.com/yourusername/analytics-dashboard",
-    category: "frontend",
-    features: [
-      "Interactive charts",
-      "Real-time updates",
-      "Custom reports",
-      "Data export",
-      "User management"
-    ],
-    challenges: [
-      "Processing real-time data",
-      "Visualizing complex metrics",
-      "Integrating multiple APIs",
-      "Ensuring data accuracy"
-    ],
-    solutions: [
-      "Used WebSocket for live updates",
-      "Implemented D3.js for visualization",
-      "Created unified API layer",
-      "Added data validation"
-    ]
-  },
-  {
-    id: 6,
-    title: "Microservices Architecture",
-    description: "A scalable microservices architecture with containerization and service discovery.",
-    image: "https://picsum.photos/seed/microservices/600/400",
-    technologies: ["Docker", "Kubernetes", "Node.js", "MongoDB"],
-    liveUrl: "https://microservices-demo.vercel.app",
-    githubUrl: "https://github.com/yourusername/microservices",
-    category: "backend",
-    features: [
-      "Service discovery",
-      "Load balancing",
-      "Container orchestration",
-      "Health monitoring",
-      "Logging system"
-    ],
-    challenges: [
-      "Service communication",
-      "Data consistency",
-      "Deployment complexity",
-      "Monitoring and debugging"
-    ],
-    solutions: [
-      "Used gRPC for communication",
-      "Implemented event sourcing",
-      "Adopted GitOps practices",
-      "Added observability tools"
-    ]
-  },
-  {
-    id: 7,
-    title: "Security System",
-    description: "A comprehensive security system with real-time threat detection and monitoring.",
-    image: "https://picsum.photos/seed/security/600/400",
-    technologies: ["Python", "TensorFlow", "React", "WebSocket"],
-    liveUrl: "https://security-system-demo.vercel.app",
-    githubUrl: "https://github.com/yourusername/security-system",
-    category: "security",
-    features: [
-      "Threat detection",
-      "Real-time monitoring",
-      "Alert system",
-      "Incident response",
-      "Security reports"
-    ],
-    challenges: [
-      "Processing security events",
-      "Reducing false positives",
-      "Ensuring system security",
-      "Managing alerts"
-    ],
-    solutions: [
-      "Used ML for threat detection",
-      "Implemented alert correlation",
-      "Added security controls",
-      "Created alert prioritization"
-    ]
-  },
-  {
-    id: 8,
-    title: "Cloud Native Application",
-    description: "A modern cloud-native application built with microservices and serverless architecture.",
-    image: "https://picsum.photos/seed/cloud-native/600/400",
-    technologies: ["AWS Lambda", "React", "DynamoDB", "API Gateway"],
-    liveUrl: "https://cloud-native-demo.vercel.app",
-    githubUrl: "https://github.com/yourusername/cloud-native",
-    category: "cloud",
-    features: [
-      "Serverless functions",
-      "API integration",
-      "Data persistence",
-      "Scalability",
-      "Monitoring"
-    ],
-    challenges: [
-      "Cold start latency",
-      "State management",
-      "Cost control",
-      "Monitoring"
-    ],
-    solutions: [
-      "Used provisioned concurrency",
-      "Implemented distributed caching",
-      "Added cost monitoring",
-      "Created comprehensive logging"
-    ]
-  }
-];
-
-const categories = [
-  { id: 'all', name: 'All Projects' },
-  { id: 'frontend', name: 'Frontend' },
-  { id: 'backend', name: 'Backend' },
-  { id: 'ai-ml', name: 'AI/ML' },
-  { id: 'security', name: 'Security' },
-  { id: 'cloud', name: 'Cloud' }
-];
 
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -329,212 +54,491 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        {/* Category Filter */}
+        {/* Enhanced Category Filter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-4 mb-12"
+          className="flex flex-wrap justify-center gap-4 mb-16"
         >
-          {categories.map((category) => (
-            <button
+          {categories.map((category, index) => (
+            <motion.button
               key={category.id}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 + index * 0.1, type: "spring", stiffness: 200 }}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-6 py-2 rounded-full transition-all duration-300 ${
+              className={`relative px-8 py-3 rounded-2xl font-semibold transition-all duration-500 overflow-hidden ${
                 activeCategory === category.id
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-md'
+                  ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 text-white shadow-2xl scale-110'
+                  : 'bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 shadow-lg hover:shadow-xl backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50'
               }`}
             >
-              {category.name}
-            </button>
+              {/* Active category glow effect */}
+              {activeCategory === category.id && (
+                <motion.div
+                  layoutId="activeGlow"
+                  className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-blue-400/20 blur-xl"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              
+              {/* Category text */}
+              <span className="relative z-10">{category.name}</span>
+              
+              {/* Hover shimmer effect */}
+              <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-[-100%] hover:translate-x-[200%] transition-transform duration-1000 ease-out" />
+              </div>
+            </motion.button>
           ))}
         </motion.div>
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, index) => (
             <motion.div
               key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="group relative bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100/50 dark:border-gray-700/50 hover:border-blue-500/30 dark:hover:border-blue-400/30 hover:-translate-y-1"
+              transition={{ 
+                duration: 0.6, 
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+              }}
+              whileHover={{ 
+                y: -12,
+                transition: { duration: 0.3, ease: "easeOut" }
+              }}
+              className="group relative bg-gradient-to-br from-white via-gray-50/80 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 rounded-3xl overflow-hidden shadow-2xl hover:shadow-4xl transition-all duration-700 cursor-pointer border border-gray-200/30 dark:border-gray-700/30 hover:border-blue-400/50 dark:hover:border-blue-400/50 backdrop-blur-sm"
               onClick={() => setSelectedProject(project)}
             >
+              {/* Animated Background Elements */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-2xl transform -translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-1000" />
+                <div className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-tl from-purple-400/20 to-pink-400/20 rounded-full blur-2xl transform translate-x-8 translate-y-8 group-hover:scale-125 transition-transform duration-1000" />
+              </div>
+
+              {/* Project Image with Enhanced Effects */}
               <div className="relative h-64 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                {/* Overlay Gradients */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10" />
+                
+                {/* Project Image */}
                 <Image
                   src={project.image}
                   alt={project.title}
                   fill
-                  className="object-cover transform group-hover:scale-110 transition-transform duration-700"
+                  className="object-cover transform group-hover:scale-110 transition-transform duration-700 group-hover:rotate-1"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
-              <div className="p-8 relative">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-600 to-purple-600 dark:from-white dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent group-hover:from-blue-600 group-hover:via-purple-600 group-hover:to-blue-600 dark:group-hover:from-blue-400 dark:group-hover:via-purple-400 dark:group-hover:to-blue-400 transition-all duration-300">
-                    {project.title}
-                  </h3>
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium whitespace-nowrap shadow-sm">
-                    {project.category === 'ai-ml' ? 'AI/ML' : project.category.charAt(0).toUpperCase() + project.category.slice(1)}
-                  </span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2 text-lg leading-relaxed">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.slice(0, 3).map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-4 py-2 bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-medium shadow-sm backdrop-blur-sm border border-blue-100/50 dark:border-blue-800/50"
+
+                {/* Floating Action Buttons */}
+                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0 z-30">
+                  {project.liveUrl && (
+                    <motion.a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors"
                     >
-                      {tech}
-                    </span>
-                  ))}
-                  {project.technologies.length > 3 && (
-                    <span className="px-4 py-2 bg-gradient-to-r from-gray-50/80 to-gray-100/80 dark:from-gray-700/30 dark:to-gray-800/30 text-gray-600 dark:text-gray-300 rounded-xl text-sm shadow-sm backdrop-blur-sm border border-gray-100/50 dark:border-gray-700/50">
-                      +{project.technologies.length - 3} more
-                    </span>
+                      <ArrowTopRightOnSquareIcon className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                    </motion.a>
+                  )}
+                  {project.githubUrl && (
+                    <motion.a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <CodeBracketIcon className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                    </motion.a>
                   )}
                 </div>
+
+                {/* Category Badge */}
+                <div className="absolute top-4 left-4 z-30">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.1 + 0.3, type: "spring" }}
+                    className="px-3 py-1.5 bg-gradient-to-r from-blue-500/90 to-purple-500/90 backdrop-blur-sm text-white rounded-full text-xs font-bold shadow-lg border border-white/20"
+                  >
+                    {project.category === 'ai-ml' ? 'AI/ML' : project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+                  </motion.div>
+                </div>
+
+                {/* Shine Effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1500 ease-out" />
+                </div>
               </div>
+
+              {/* Enhanced Content Section */}
+              <div className="p-6 relative z-10">
+                {/* Title with Animated Underline */}
+                <div className="mb-4">
+                  <motion.h3 
+                    className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    {project.title}
+                  </motion.h3>
+                  <div className="h-0.5 w-0 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all duration-500 ease-out" />
+                </div>
+                
+                {/* Description */}
+                <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed line-clamp-3 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
+                  {project.description}
+                </p>
+
+                {/* Technology Tags with Stagger Animation */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.technologies.slice(0, 3).map((tech, techIndex) => (
+                    <motion.span
+                      key={tech}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ 
+                        delay: index * 0.1 + techIndex * 0.05 + 0.4,
+                        type: "spring",
+                        stiffness: 200
+                      }}
+                      className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium shadow-sm border border-blue-200/50 dark:border-blue-700/50 group-hover:shadow-md group-hover:scale-105 transition-all duration-300"
+                    >
+                      {tech}
+                    </motion.span>
+                  ))}
+                  {project.technologies.length > 3 && (
+                    <motion.span 
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ 
+                        delay: index * 0.1 + 0.55,
+                        type: "spring",
+                        stiffness: 200
+                      }}
+                      className="px-3 py-1.5 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700/50 dark:to-gray-600/50 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-medium shadow-sm border border-gray-300/50 dark:border-gray-600/50 group-hover:scale-105 transition-all duration-300"
+                    >
+                      +{project.technologies.length - 3}
+                    </motion.span>
+                  )}
+                </div>
+
+                {/* Progress Bar */}
+                <div className="relative">
+                  <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "100%" }}
+                      transition={{ duration: 1.5, delay: index * 0.1 + 0.6 }}
+                      className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full"
+                    />
+                  </div>
+                  <div className="absolute -top-1 left-0 w-3 h-3 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+
+                {/* Hover Reveal Button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  className="mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
+                >
+                  <button className="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:from-blue-600 hover:to-purple-600">
+                    View Details
+                  </button>
+                </motion.div>
+              </div>
+
+              {/* Corner Decorations */}
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/5 to-transparent rounded-bl-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-purple-400/5 to-transparent rounded-tr-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Project Modal */}
+      {/* Enhanced Project Modal */}
       <AnimatePresence>
         {selectedProject && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedProject(null)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto mt-16 shadow-2xl border border-gray-100/50 dark:border-gray-700/50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+              initial={{ scale: 0.8, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 50 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="bg-gradient-to-br from-white via-gray-50/90 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto mt-16 shadow-4xl border border-gray-200/50 dark:border-gray-700/50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] backdrop-blur-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative h-72">
+                          {/* Enhanced Modal Header */}
+            <div className="relative h-80 overflow-hidden">
+              {/* Background Image with Parallax Effect */}
+              <motion.div
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0"
+              >
                 <Image
                   src={selectedProject.image}
                   alt={selectedProject.title}
                   fill
                   className="object-cover rounded-t-3xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent rounded-t-3xl" />
-                <button
-                  onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors"
-                >
-                  <XMarkIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-                </button>
+              </motion.div>
+              
+              {/* Gradient Overlays */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 rounded-t-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-t-3xl" />
+              
+              {/* Animated Background Elements */}
+              <div className="absolute inset-0">
+                <motion.div
+                  animate={{ 
+                    x: [0, 100, 0],
+                    y: [0, -50, 0],
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-10 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"
+                />
+                <motion.div
+                  animate={{ 
+                    x: [0, -80, 0],
+                    y: [0, 60, 0],
+                    scale: [1, 0.8, 1]
+                  }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  className="absolute bottom-10 right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl"
+                />
               </div>
 
-              <div className="p-8">
-                <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                  {selectedProject.title}
-                </h2>
-                <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                  {selectedProject.description}
-                </p>
-
-                <div className="flex gap-4 mb-8">
-                  <a
-                    href={selectedProject.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-500 hover:via-blue-400 hover:to-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden"
+              {/* Modal Header Content */}
+              <div className="absolute inset-0 flex flex-col justify-between p-8 z-10">
+                {/* Top Bar */}
+                <div className="flex justify-between items-start">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-500/90 to-purple-500/90 backdrop-blur-sm text-white rounded-full text-sm font-bold shadow-lg border border-white/20"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-white/20 to-blue-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></span>
-                    <ArrowTopRightOnSquareIcon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                    <span className="relative font-medium">Live Demo</span>
-                  </a>
-                  <a
-                    href={selectedProject.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800 text-gray-700 dark:text-gray-300 rounded-xl hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden border border-gray-200/50 dark:border-gray-600/50"
+                    {selectedProject.category === 'ai-ml' ? 'AI/ML' : selectedProject.category.charAt(0).toUpperCase() + selectedProject.category.slice(1)}
+                  </motion.div>
+                  
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setSelectedProject(null)}
+                    className="p-3 bg-white/20 dark:bg-gray-800/30 backdrop-blur-md rounded-full shadow-lg hover:bg-white/30 dark:hover:bg-gray-700/40 transition-all duration-300 border border-white/20"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-gray-200/0 via-white/20 to-gray-200/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></span>
-                    <CodeBracketIcon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                    <span className="relative font-medium">View Code</span>
-                  </a>
+                    <XMarkIcon className="w-6 h-6 text-white" />
+                  </motion.button>
                 </div>
 
-                <div className="space-y-8">
-                  <div>
-                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                      Key Features
-                    </h3>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {selectedProject.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                          <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                          <span className="text-gray-700 dark:text-gray-300">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Title and Quick Actions */}
+                <div className="space-y-4">
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-4xl md:text-5xl font-bold text-white leading-tight"
+                  >
+                    {selectedProject.title}
+                  </motion.h2>
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex gap-4"
+                  >
+                    {selectedProject.liveUrl && (
+                      <motion.a
+                        href={selectedProject.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="group flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-md text-white rounded-xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-white/20"
+                      >
+                        <ArrowTopRightOnSquareIcon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                        <span className="font-medium">Live Demo</span>
+                      </motion.a>
+                    )}
+                    {selectedProject.githubUrl && (
+                      <motion.a
+                        href={selectedProject.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="group flex items-center gap-2 px-6 py-3 bg-gray-900/30 backdrop-blur-md text-white rounded-xl hover:bg-gray-900/50 transition-all duration-300 shadow-lg hover:shadow-xl border border-white/10"
+                      >
+                        <CodeBracketIcon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                        <span className="font-medium">View Code</span>
+                      </motion.a>
+                    )}
+                  </motion.div>
+                </div>
+              </div>
+            </div>
 
-                  <div>
-                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                      Challenges & Solutions
-                    </h3>
+              {/* Enhanced Modal Content */}
+              <div className="p-8 space-y-10">
+                {/* Project Description */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="text-center"
+                >
+                  <p className="text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
+                    {selectedProject.description}
+                  </p>
+                </motion.div>
+
+                {/* Enhanced Content Sections */}
+                <div className="space-y-12">
+                  {/* Key Features */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <div className="text-center mb-8">
+                      <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                        Key Features
+                      </h3>
+                      <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full" />
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <h4 className="text-xl font-medium text-gray-900 dark:text-white">
+                      {selectedProject.features.map((feature, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.8 + index * 0.1 }}
+                          className="group flex items-start gap-4 p-6 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-100/50 dark:border-blue-800/30 hover:shadow-lg transition-all duration-300 hover:scale-105"
+                        >
+                          <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mt-1.5 group-hover:scale-125 transition-transform duration-300" />
+                          <span className="text-gray-700 dark:text-gray-300 font-medium">{feature}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+
+                  {/* Challenges & Solutions */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.9 }}
+                  >
+                    <div className="text-center mb-8">
+                      <h3 className="text-3xl font-bold bg-gradient-to-r from-red-500 via-orange-500 to-green-500 bg-clip-text text-transparent mb-2">
+                        Challenges & Solutions
+                      </h3>
+                      <div className="w-24 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-green-500 mx-auto rounded-full" />
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      {/* Challenges */}
+                      <div className="space-y-6">
+                        <h4 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">!</span>
+                          </div>
                           Challenges
                         </h4>
-                        <ul className="space-y-3">
+                        <div className="space-y-4">
                           {selectedProject.challenges.map((challenge, index) => (
-                            <li key={index} className="flex gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                              <span className="w-2 h-2 bg-red-500 rounded-full mt-2"></span>
-                              <span className="text-gray-700 dark:text-gray-300">{challenge}</span>
-                            </li>
+                            <motion.div
+                              key={index}
+                              initial={{ opacity: 0, x: -30 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 1.0 + index * 0.1 }}
+                              className="group flex gap-4 p-5 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/20 dark:to-orange-900/20 rounded-2xl border border-red-100/50 dark:border-red-800/30 hover:shadow-lg transition-all duration-300"
+                            >
+                              <div className="w-3 h-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-full mt-2 group-hover:scale-125 transition-transform duration-300" />
+                              <span className="text-gray-700 dark:text-gray-300 leading-relaxed">{challenge}</span>
+                            </motion.div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
-                      <div className="space-y-4">
-                        <h4 className="text-xl font-medium text-gray-900 dark:text-white">
+
+                      {/* Solutions */}
+                      <div className="space-y-6">
+                        <h4 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">✓</span>
+                          </div>
                           Solutions
                         </h4>
-                        <ul className="space-y-3">
+                        <div className="space-y-4">
                           {selectedProject.solutions.map((solution, index) => (
-                            <li key={index} className="flex gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                              <span className="w-2 h-2 bg-green-500 rounded-full mt-2"></span>
-                              <span className="text-gray-700 dark:text-gray-300">{solution}</span>
-                            </li>
+                            <motion.div
+                              key={index}
+                              initial={{ opacity: 0, x: 30 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 1.0 + index * 0.1 }}
+                              className="group flex gap-4 p-5 bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border border-green-100/50 dark:border-green-800/30 hover:shadow-lg transition-all duration-300"
+                            >
+                              <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mt-2 group-hover:scale-125 transition-transform duration-300" />
+                              <span className="text-gray-700 dark:text-gray-300 leading-relaxed">{solution}</span>
+                            </motion.div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div>
-                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                      Technologies Used
-                    </h3>
-                    <div className="flex flex-wrap gap-3">
-                      {selectedProject.technologies.map((tech) => (
-                        <span
+                  {/* Technologies Used */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.1 }}
+                  >
+                    <div className="text-center mb-8">
+                      <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                        Technologies Used
+                      </h3>
+                      <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto rounded-full" />
+                    </div>
+                    <div className="flex flex-wrap gap-4 justify-center">
+                      {selectedProject.technologies.map((tech, index) => (
+                        <motion.span
                           key={tech}
-                          className="px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-medium shadow-sm"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 1.2 + index * 0.05 }}
+                          whileHover={{ scale: 1.1, y: -5 }}
+                          className="px-6 py-3 bg-gradient-to-r from-blue-100 via-purple-100 to-blue-100 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-blue-900/30 text-blue-700 dark:text-blue-300 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-200/50 dark:border-blue-700/50 cursor-default"
                         >
                           {tech}
-                        </span>
+                        </motion.span>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
