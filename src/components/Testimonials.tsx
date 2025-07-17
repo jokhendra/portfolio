@@ -47,36 +47,6 @@ const testimonials: Testimonial[] = [
     rating: 5,
     image: "/api/placeholder/60/60?text=ER",
     projectType: "Website Redesign"
-  },
-  {
-    id: 4,
-    name: "David Thompson",
-    role: "Founder",
-    company: "StartupLaunch",
-    content: "As a startup, we needed someone who could wear multiple hats and deliver quality work quickly. Jokhendra developed our entire web application from scratch, including user authentication, payment integration, and admin dashboard. Exceptional work!",
-    rating: 5,
-    image: "/api/placeholder/60/60?text=DT",
-    projectType: "Full-Stack App"
-  },
-  {
-    id: 5,
-    name: "Lisa Wang",
-    role: "Operations Manager",
-    company: "Global Logistics Co",
-    content: "The inventory management system Jokhendra built for us has revolutionized our operations. The real-time tracking, automated reporting, and intuitive interface have saved us countless hours. His communication throughout the project was excellent.",
-    rating: 5,
-    image: "/api/placeholder/60/60?text=LW",
-    projectType: "Management System"
-  },
-  {
-    id: 6,
-    name: "James Parker",
-    role: "Restaurant Owner",
-    company: "Parker's Bistro",
-    content: "Jokhendra created a comprehensive restaurant management system with online ordering, inventory tracking, and customer management. The system is user-friendly and has streamlined our entire operation. Couldn't be happier with the results!",
-    rating: 5,
-    image: "/api/placeholder/60/60?text=JP",
-    projectType: "Restaurant System"
   }
 ];
 
@@ -132,7 +102,7 @@ export default function Testimonials() {
   };
 
   return (
-    <section id="testimonials" className="bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 relative overflow-hidden">
+    <section id="testimonials" className="bg-gradient-to-r from-blue-300 to-purple-300 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 relative overflow-hidden">
       {/* Enhanced Background Elements */}
       <div className="absolute inset-0">
         <motion.div
@@ -247,10 +217,10 @@ export default function Testimonials() {
                   scale: 1.02,
                   boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
                 }}
-                className="group relative"
+                className="group relative h-100"
               >
                 {/* Glass-morphism card */}
-                <div className="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl p-8 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20 dark:border-gray-700/50 overflow-hidden">
+                <div className="relative bg-white/90 dark:bg-gray-800/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20 dark:border-gray-600/50 overflow-hidden">
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-2xl" />
                   
@@ -270,7 +240,7 @@ export default function Testimonials() {
                     </div>
 
                     {/* Content */}
-                    <p className="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed text-lg">
+                    <p className="text-gray-800 dark:text-gray-200 mb-8 leading-relaxed text-lg">
                       "{testimonial.content}"
                     </p>
 
@@ -285,10 +255,10 @@ export default function Testimonials() {
                         <h4 className="font-bold text-gray-900 dark:text-white text-lg">
                           {testimonial.name}
                         </h4>
-                        <p className="text-gray-600 dark:text-gray-400 font-medium">
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">
                           {testimonial.role}
                         </p>
-                        <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 mt-1 font-medium">
+                        <div className="flex items-center text-sm text-blue-600 dark:text-blue-300 mt-1 font-medium">
                           <BuildingOfficeIcon className="w-4 h-4 mr-2" />
                           {testimonial.company}
                         </div>
@@ -324,7 +294,7 @@ export default function Testimonials() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8 }}
                       whileHover={{ scale: 1.02 }}
-                      className="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden"
+                      className="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden"
                     >
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-2xl" />
@@ -341,7 +311,7 @@ export default function Testimonials() {
                         </div>
 
                         {/* Content */}
-                        <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+                        <p className="text-gray-800 dark:text-gray-200 mb-6 leading-relaxed">
                           "{testimonial.content}"
                         </p>
 
@@ -356,10 +326,10 @@ export default function Testimonials() {
                             <h4 className="font-bold text-gray-900 dark:text-white">
                               {testimonial.name}
                             </h4>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">
+                            <p className="text-gray-700 dark:text-gray-300 text-sm">
                               {testimonial.role}
                             </p>
-                            <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            <div className="flex items-center text-xs text-blue-600 dark:text-blue-300 mt-1">
                               <BuildingOfficeIcon className="w-3 h-3 mr-1" />
                               {testimonial.company}
                             </div>

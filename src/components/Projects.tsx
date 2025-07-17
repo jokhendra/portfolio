@@ -37,7 +37,7 @@ const FloatingParticles = () => {
       {[...Array(20)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-20"
+          className="absolute w-2 h-2 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full opacity-20"
           animate={{
             x: [0, 100, 0],
             y: [0, -100, 0],
@@ -79,7 +79,7 @@ export default function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="relative bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 overflow-hidden">
+    <section id="projects" className="relative bg-gradient-to-r from-blue-300 to-purple-300 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5" />
