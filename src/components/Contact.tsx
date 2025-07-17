@@ -398,37 +398,7 @@ export default function Contact() {
             </div>
 
             {/* Client Testimonials */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                What Clients Say
-              </h3>
-              <div className="space-y-4">
-                {testimonials.map((testimonial, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-white dark:bg-gray-800/50 p-4 rounded-lg border border-gray-200/50 dark:border-gray-700/30"
-                  >
-                    <div className="flex items-center gap-1 mb-2">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <StarIcon key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                      ))}
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                      "{testimonial.content}"
-                    </p>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      <span className="font-medium">{testimonial.name}</span>
-                      <span className="mx-1">•</span>
-                      <span>{testimonial.role}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+            
           </motion.div>
 
           {/* Enhanced Contact Form */}
@@ -587,61 +557,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label htmlFor="projectType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Project Type
-                </label>
-                <select
-                  id="projectType"
-                  name="projectType"
-                  value={formData.projectType}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200"
-                >
-                  <option value="">Select type</option>
-                  {projectTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="timeline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Timeline
-                </label>
-                <select
-                  id="timeline"
-                  name="timeline"
-                  value={formData.timeline}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200"
-                >
-                  <option value="">Select timeline</option>
-                  {timelines.map((timeline) => (
-                    <option key={timeline} value={timeline}>{timeline}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Budget Range
-                </label>
-                <select
-                  id="budget"
-                  name="budget"
-                  value={formData.budget}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200"
-                >
-                  <option value="">Select budget</option>
-                  {budgetRanges.map((budget) => (
-                    <option key={budget} value={budget}>{budget}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          
             
             <div>
               <label htmlFor="portfolio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

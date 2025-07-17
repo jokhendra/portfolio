@@ -5,6 +5,7 @@ import Projects from '@/components/Projects'
 import Skills from '@/components/Skills'
 import Testimonials from '@/components/Testimonials'
 import Contact from '@/components/Contact'
+import CalScheduler from '@/components/CalScheduler'
 import Chatbot from '@/components/Chatbot'
 
 export default function Home() {
@@ -24,6 +25,9 @@ export default function Home() {
         </section>
         <section id="testimonials">
           <Testimonials />
+        </section>
+        <section id="schedule">
+          <CalScheduler />
         </section>
         <section id="contact">
           <Contact />
