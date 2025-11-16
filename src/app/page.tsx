@@ -13,7 +13,7 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
       <Navbar />
       <Hero />
-      <main className="flex-grow">
+      <div className="flex-grow">
         <section id="about">
           <About />
         </section>
@@ -32,7 +32,7 @@ export default function Home() {
         <section id="contact">
           <Contact />
         </section>
-      </main>
+      </div>
       <Chatbot />
     </main>
   )

@@ -31,6 +31,7 @@ interface FormData {
   budget: string;
   portfolio?: string;
   company?: string;
+  companyWebsite?: string; // honeypot
 }
 
 interface FormErrors {
@@ -99,13 +100,19 @@ export default function Contact() {
     timeline: '',
     budget: '',
     portfolio: '',
-    company: ''
+    company: '',
+    companyWebsite: ''
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [startedAt, setStartedAt] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    setStartedAt(Date.now());
+  }, []);
 
   // Validate form fields
   const validateField = (name: string, value: string): string => {
@@ -143,6 +150,7 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
+    const elapsedMs = Date.now() - startedAt;
 
     // Validate all fields before submission
     const errors: FormErrors = {};
@@ -169,7 +177,7 @@ export default function Contact() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, elapsedMs }),
       });
 
       const data = await response.json();
@@ -189,14 +197,16 @@ export default function Contact() {
         timeline: '',
         budget: '',
         portfolio: '',
-        company: ''
+        company: '',
+        companyWebsite: ''
       });
       setTouched({});
       setFormErrors({});
       
       setTimeout(() => setIsSubmitted(false), 5000);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setError(message);
       setTimeout(() => setError(''), 5000);
     } finally {
       setIsSubmitting(false);
@@ -315,10 +325,10 @@ export default function Contact() {
                     Email
                   </h3>
                   <a 
-                    href="mailto:jokhendra.dev@outlook.com"
+                    href="mailto:jokhendra.prajapati@gmail.com"
                     className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
-                    jokhendra.dev@outlook.com
+                    jokhendra.prajapati@gmail.com
                   </a>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Best for project inquiries and detailed discussions
@@ -326,7 +336,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
+              {/* <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
                   <PhoneIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
@@ -335,16 +345,16 @@ export default function Contact() {
                     Phone
                   </h3>
                   <a 
-                    href="tel:+917388187060"
+                    href="tel:+91738818"
                     className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
                   >
-                    +91 7388187060
+                    +91 738818
                   </a>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Available 9:00 AM - 6:00 PM IST for urgent matters
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -413,6 +423,19 @@ export default function Contact() {
             role="form"
             aria-labelledby="contact-form-title"
           >
+            {/* Honeypot field (hidden) */}
+            <div className="sr-only" aria-hidden="true">
+              <label htmlFor="companyWebsite">Company Website</label>
+              <input
+                type="text"
+                id="companyWebsite"
+                name="companyWebsite"
+                tabIndex={-1}
+                autoComplete="off"
+                value={formData.companyWebsite}
+                onChange={handleChange}
+              />
+            </div>
             <div className="text-center mb-6">
               <h3 id="contact-form-title" className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                 Start Your Project

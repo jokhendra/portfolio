@@ -46,6 +46,15 @@ export default function Hero() {
 
   // Floating particles animation
   const particles = Array.from({ length: 20 }, (_, i) => i);
+  const [particlePositions, setParticlePositions] = useState<Array<{ left: string; top: string }>>([]);
+  useEffect(() => {
+    const positions = particles.map(() => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }));
+    setParticlePositions(positions);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -92,28 +101,26 @@ export default function Hero() {
         />
       </div>
 
-      {/* Floating particles */}
-      {particles.map((particle) => (
-        <motion.div
-          key={particle}
-          className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-60"
-          animate={{
-            x: [0, Math.random() * 100 - 50],
-            y: [0, Math.random() * 100 - 50],
-            scale: [0, 1, 0],
-            opacity: [0, 0.8, 0],
-          }}
-          transition={{
-            duration: Math.random() * 3 + 2,
-            repeat: Infinity,
-            delay: Math.random() * 2,
-          }}
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-        />
-      ))}
+      {/* Floating particles (client-only positions to avoid hydration mismatch) */}
+      {particlePositions.length > 0 &&
+        particles.map((particle, idx) => (
+          <motion.div
+            key={particle}
+            className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-60"
+            animate={{
+              x: [0, Math.random() * 100 - 50],
+              y: [0, Math.random() * 100 - 50],
+              scale: [0, 1, 0],
+              opacity: [0, 0.8, 0],
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+            style={{ left: particlePositions[idx].left, top: particlePositions[idx].top }}
+          />
+        ))}
 
       {/* Content */}
       <div className="relative z-10 text-center px-4">

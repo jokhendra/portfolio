@@ -4,9 +4,29 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
 export const metadata: Metadata = {
   title: "Jokhendra Prajapati - Portfolio",
   description: "Personal portfolio website showcasing my projects, skills, and experience.",
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    title: 'Jokhendra Prajapati - Portfolio',
+    description: 'Personal portfolio website showcasing my projects, skills, and experience.',
+    url: siteUrl,
+    siteName: 'Jokhendra Portfolio',
+    images: [
+      { url: '/next.svg', width: 1200, height: 630, alt: 'Jokhendra Portfolio' },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Jokhendra Prajapati - Portfolio',
+    description: 'Personal portfolio website showcasing my projects, skills, and experience.',
+    images: ['/next.svg'],
+  },
 };
 
 export default function RootLayout({

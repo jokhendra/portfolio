@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { UserIcon, CodeBracketIcon, LightBulbIcon, SparklesIcon, RocketLaunchIcon, HeartIcon } from '@heroicons/react/24/outline';
 
 const features = [
@@ -49,6 +50,8 @@ const features = [
 ];
 
 export default function About() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   return (
     <section id="about" className="relative bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
       {/* Background decorative elements */}
@@ -131,30 +134,32 @@ export default function About() {
                 {/* Animated border gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl`} />
                 
-                {/* Floating particles effect */}
-                <div className="absolute inset-0 overflow-hidden">
-                  {[...Array(3)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute w-1 h-1 bg-white/60 rounded-full"
-                      animate={{
-                        x: [0, Math.random() * 100 - 50],
-                        y: [0, Math.random() * 100 - 50],
-                        scale: [0, 1, 0],
-                        opacity: [0, 0.8, 0],
-                      }}
-                      transition={{
-                        duration: Math.random() * 2 + 2,
-                        repeat: Infinity,
-                        delay: Math.random() * 2,
-                      }}
-                      style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                      }}
-                    />
-                  ))}
-                </div>
+                {/* Floating particles effect (client-only to avoid hydration mismatch) */}
+                {mounted && (
+                  <div className="absolute inset-0 overflow-hidden">
+                    {[...Array(3)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-1 h-1 bg-white/60 rounded-full"
+                        animate={{
+                          x: [0, Math.random() * 100 - 50],
+                          y: [0, Math.random() * 100 - 50],
+                          scale: [0, 1, 0],
+                          opacity: [0, 0.8, 0],
+                        }}
+                        transition={{
+                          duration: Math.random() * 2 + 2,
+                          repeat: Infinity,
+                          delay: Math.random() * 2,
+                        }}
+                        style={{
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
 
                 {/* Icon container with enhanced effects */}
                 <motion.div 

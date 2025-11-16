@@ -9,7 +9,7 @@ export const projects: Project[] = [
     "technologies": ["Python", "LangChain", "FAISS", "BM25", "Groq API", "FastAPI", "Streamlit"],
     "liveUrl": "https://hybrid-rag-chat.vercel.app",
     "githubUrl": "https://github.com/yourusername/hybrid-rag-chat",
-    "category": "AI/ML",
+    "category": "ai-ml",
     "features": [
       "Website-based context-aware AI responses",
       "Real-time messaging with WebSocket",
@@ -39,7 +39,7 @@ export const projects: Project[] = [
     technologies: ["LangChain", "Groq", "Python", "SQLite", "Tavily Search", "Matplotlib "],
     liveUrl: "https://ecommerce-demo.vercel.app",
     githubUrl: "https://github.com/yourusername/ecommerce",
-    category: "AI/ML",
+    category: "ai-ml",
     features: [
       "Savings Calculation",
       "Carbon Footprint Estimation",
@@ -75,7 +75,7 @@ export const projects: Project[] = [
     technologies: ["Python", "Streamlit", "Pandas", "Matplotlib & Seaborn","Natural Language Processing","Topic Modeling","Regular Expressions"],
     liveUrl: "https://cloud-dashboard-demo.vercel.app",
     githubUrl: "https://github.com/yourusername/cloud-dashboard",
-    category: "AI/ML",
+    category: "ai-ml",
     features: [
       "Chat Preprocessing : Converts raw WhatsApp chat exports into structured data",
       "User-specific Analysis : Filter analysis by individual users or view overall statistics",

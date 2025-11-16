@@ -32,9 +32,19 @@ import { projects, categories } from '../data/projects';
 
 // Floating particles component
 const FloatingParticles = () => {
+  const [positions, setPositions] = useState<Array<{ left: string; top: string }>>([]);
+  useEffect(() => {
+    // Generate stable positions on client after mount to avoid hydration mismatch
+    const generated = [...Array(20)].map(() => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }));
+    setPositions(generated);
+  }, []);
+  if (positions.length === 0) return null;
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(20)].map((_, i) => (
+      {positions.map((pos, i) => (
         <motion.div
           key={i}
           className="absolute w-2 h-2 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full opacity-20"
@@ -48,12 +58,9 @@ const FloatingParticles = () => {
             duration: 8 + Math.random() * 4,
             repeat: Infinity,
             delay: Math.random() * 5,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
+          style={{ left: pos.left, top: pos.top }}
         />
       ))}
     </div>
