@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowUpIcon, CommandLineIcon } from '@heroicons/react/24/outline';
 import { agentSuggestions } from '@/data/agentCorpus';
 import { profile } from '@/data/profile';
+import AgentMarkdown from './AgentMarkdown';
 
 interface Source {
   title: string;
@@ -21,11 +22,12 @@ interface Message {
   content: string;
   sources?: Source[];
   mode?: string;
+  followups?: string[];
 }
 
 const INTRO: Message = {
   role: 'assistant',
-  content: `Ask me about ${profile.shortName}'s work. I retrieve from this site's own project and profile data, then answer from what I find and show the passages I used.`,
+  content: `Hey — ask me about my work. Realtime systems, RAG, LangGraph agents, backend and cloud. I'll answer from the case studies on this site.`,
 };
 
 export default function AgentConsole() {
@@ -34,6 +36,7 @@ export default function AgentConsole() {
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState('');
+  const [liveFollowups, setLiveFollowups] = useState<string[]>([]);
   const transcriptRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,6 +50,7 @@ export default function AgentConsole() {
 
     setError('');
     setTrace([]);
+    setLiveFollowups([]);
     setInput('');
     setIsStreaming(true);
 
@@ -78,7 +82,7 @@ export default function AgentConsole() {
 
       if (!response.ok || !response.body) {
         const payload = await response.json().catch(() => null);
-        throw new Error(payload?.error || 'The agent is unavailable right now.');
+        throw new Error(payload?.error || `${profile.agentName} is unavailable right now.`);
       }
 
       const reader = response.body.getReader();
@@ -115,6 +119,14 @@ export default function AgentConsole() {
             case 'mode':
               patchAssistant((message) => ({ ...message, mode: String(event.detail) }));
               break;
+            case 'followups': {
+              const followups = Array.isArray(event.followups)
+                ? (event.followups as unknown[]).filter((item): item is string => typeof item === 'string')
+                : [];
+              setLiveFollowups(followups);
+              patchAssistant((message) => ({ ...message, followups }));
+              break;
+            }
             case 'reset':
               patchAssistant((message) => ({ ...message, content: '' }));
               break;
@@ -136,13 +148,16 @@ export default function AgentConsole() {
           : { ...message, content: 'No answer came back for that question. Try rephrasing it.' }
       );
     } catch (caught) {
-      const detail = caught instanceof Error ? caught.message : 'The agent is unavailable right now.';
+      const detail = caught instanceof Error ? caught.message : `${profile.agentName} is unavailable right now.`;
       setError(detail);
       setMessages((previous) => previous.slice(0, -1));
     } finally {
       setIsStreaming(false);
     }
   };
+
+  const chipSuggestions =
+    liveFollowups.length > 0 ? liveFollowups.slice(0, 3) : agentSuggestions.slice(0, 2);
 
   return (
     <section id="ask" className="section-band py-20 sm:py-28">
@@ -154,11 +169,11 @@ export default function AgentConsole() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl"
         >
-          <p className="eyebrow">Ask about my work</p>
-          <h2 className="section-heading mt-4">A working agent, not a scripted widget</h2>
+          <p className="eyebrow">Ask {profile.agentName}</p>
+          <h2 className="section-heading mt-4">{profile.agentName} — a working agent, not a scripted widget</h2>
           <p className="lede mt-5">
-            This runs the routing, retrieval and tool pattern from the case studies against this site&apos;s
-            own content. The execution trace on the right is the agent&apos;s actual path through the turn.
+            {profile.agentName} answers from this site&apos;s own case studies and profile — with a live
+            execution trace so you can see the path through each turn.
           </p>
         </motion.div>
 
@@ -173,13 +188,13 @@ export default function AgentConsole() {
               {messages.map((message, index) => (
                 <div key={index} className={message.role === 'user' ? 'text-right' : ''}>
                   <p className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-faint">
-                    {message.role === 'user' ? 'you' : 'agent'}
+                    {message.role === 'user' ? 'you' : profile.agentName}
                   </p>
                   <div
                     className={
                       message.role === 'user'
                         ? 'inline-block max-w-[85%] border px-4 py-3 text-left text-sm text-ink'
-                        : 'text-sm leading-relaxed text-ink'
+                        : 'max-w-none text-sm leading-relaxed text-ink'
                     }
                     style={
                       message.role === 'user'
@@ -187,29 +202,34 @@ export default function AgentConsole() {
                         : undefined
                     }
                   >
-                    {message.content
-                      ? message.content.split('\n\n').map((paragraph, paragraphIndex) => (
-                          <p key={paragraphIndex} className={paragraphIndex > 0 ? 'mt-3' : undefined}>
-                            {paragraph}
-                          </p>
-                        ))
-                      : isStreaming && (
-                          <span className="mono text-xs text-faint">working…</span>
-                        )}
+                    {message.content ? (
+                      message.role === 'assistant' ? (
+                        <AgentMarkdown content={message.content} />
+                      ) : (
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      )
+                    ) : (
+                      isStreaming && <span className="mono text-xs text-faint">working…</span>
+                    )}
                   </div>
 
                   {message.sources && message.sources.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {message.sources.map((source) => (
-                        <span key={`${source.source}-${source.title}`} className="tag">
-                          {source.source}: {source.title.replace(`${source.source} - `, '')}
-                        </span>
-                      ))}
-                    </div>
+                    <p className="mono mt-3 text-[10px] leading-relaxed tracking-wide text-faint">
+                      Sources ·{' '}
+                      {message.sources
+                        .slice(0, 2)
+                        .map((source) =>
+                          source.title.includes(' - ')
+                            ? source.title.split(' - ').slice(1).join(' - ')
+                            : source.title
+                        )
+                        .join(' · ')}
+                      {message.sources.length > 2 ? ` · +${message.sources.length - 2}` : ''}
+                    </p>
                   )}
 
                   {message.mode && (
-                    <p className="mono mt-2 text-[10px] uppercase tracking-wider text-faint">
+                    <p className="mono mt-1.5 text-[10px] uppercase tracking-wider text-faint">
                       {message.mode}
                     </p>
                   )}
@@ -218,18 +238,21 @@ export default function AgentConsole() {
             </div>
 
             <div className="border-t p-4" style={{ borderColor: 'var(--line)' }}>
-              <div className="mb-3 flex flex-wrap gap-2">
-                {agentSuggestions.slice(0, 3).map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    onClick={() => ask(suggestion)}
-                    disabled={isStreaming}
-                    className="tag transition-colors hover:border-accent-line hover:text-accent disabled:opacity-50"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
+              {!isStreaming && chipSuggestions.length > 0 && (
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {chipSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => ask(suggestion)}
+                      disabled={isStreaming}
+                      className="tag transition-colors hover:border-accent-line hover:text-accent disabled:opacity-50"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <form
                 onSubmit={(event) => {
@@ -239,14 +262,14 @@ export default function AgentConsole() {
                 className="flex gap-2"
               >
                 <label htmlFor="agent-input" className="sr-only">
-                  Ask the portfolio agent a question
+                  Ask {profile.agentName} a question
                 </label>
                 <input
                   id="agent-input"
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                   maxLength={500}
-                  placeholder="How is the LangGraph agent structured?"
+                  placeholder={`Ask ${profile.agentName} about My Live, RAG, or LangGraph…`}
                   className="field"
                   disabled={isStreaming}
                 />
@@ -276,7 +299,7 @@ export default function AgentConsole() {
 
             {trace.length === 0 ? (
               <p className="mt-5 text-xs leading-relaxed text-faint">
-                Ask a question to see the route, retrieval and tool steps for that turn.
+                Ask a question to see rewrite, route, retrieve and answer steps.
               </p>
             ) : (
               <ol className="mt-5 space-y-4">
@@ -295,23 +318,6 @@ export default function AgentConsole() {
                 ))}
               </ol>
             )}
-
-            <div className="mt-8 border-t pt-5" style={{ borderColor: 'var(--line)' }}>
-              <h3 className="mono text-[11px] uppercase tracking-[0.16em] text-faint">Also try</h3>
-              <ul className="mt-3 space-y-2">
-                {agentSuggestions.slice(3).map((suggestion) => (
-                  <li key={suggestion}>
-                    <button
-                      onClick={() => ask(suggestion)}
-                      disabled={isStreaming}
-                      className="text-left text-xs leading-relaxed text-muted transition-colors hover:text-accent disabled:opacity-50"
-                    >
-                      {suggestion}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </aside>
         </div>
       </div>

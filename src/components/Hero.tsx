@@ -156,7 +156,7 @@ export default function Hero() {
             See selected work
           </a>
           <a href="#ask" className="btn-ghost">
-            Ask my agent
+            Ask {profile.agentName}
           </a>
           <a
             href={profile.cvUrl}

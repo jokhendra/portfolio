@@ -131,11 +131,12 @@ function buildCorpus(): CorpusChunk[] {
 export const corpus: CorpusChunk[] = buildCorpus();
 
 export const agentSuggestions = [
-  'How do you structure a LangGraph agent?',
   'How did you scale realtime on My Live?',
   'Why hybrid retrieval instead of dense-only?',
   'What backend and WebRTC experience do you have?',
-  'What broke in one of these projects?',
-  'How do you deploy and operate services on AWS?',
+  'How do you structure a LangGraph agent?',
+  'What broke in Cynayd Connect?',
+  'Compare My Live and Cynayd Connect',
+  'Are you available for hire?',
   `What has ${profile.shortName} been building on GitHub?`,
 ];

@@ -459,9 +459,9 @@ export const projects: Project[] = [
   {
     id: 6,
     slug: 'portfolio-agent',
-    title: "This Site's Agent",
+    title: 'Groot',
     tagline:
-      'A live retrieval agent on this page: route, retrieve, tool call, then answer — with the trace visible.',
+      'Groot — the live retrieval agent on this page: route, retrieve, tool call, then answer, with the trace visible.',
     capabilityArea: 'Integration and deployment',
     category: 'agent',
     capabilities: ['agent', 'rag', 'backend', 'fullstack'],
@@ -471,7 +471,7 @@ export const projects: Project[] = [
     problem:
       'Most portfolio chatbots are keyword scripts dressed as AI. That misleads visitors and teaches nothing about how the engineer actually builds agents.',
     description:
-      'The Ask section on this site is a real agent path: intent routing, hybrid retrieval over the same profile and case-study data the page renders, an optional live GitHub tool, and streamed answers with citations and an execution trace. Without a model key it still answers extractively and says so.',
+      'Groot powers the Ask section on this site: intent routing, hybrid retrieval over the same profile and case-study data the page renders, an optional live GitHub tool, and streamed answers with citations and an execution trace. Without a model key it still answers extractively and says so.',
     technologies: [
       'Next.js',
       'TypeScript',
@@ -491,7 +491,7 @@ export const projects: Project[] = [
       summary:
         'The same brain-and-hands split used in larger systems, scaled down to one route handler with no vendor lock-in.',
       nodes: [
-        { id: 'ui', label: 'Agent console', sublabel: 'this page', kind: 'client', column: 0, row: 0 },
+        { id: 'ui', label: 'Groot console', sublabel: 'this page', kind: 'client', column: 0, row: 0 },
         { id: 'route', label: 'Intent router', sublabel: 'portfolio / github', kind: 'orchestrator', column: 1, row: 0 },
         { id: 'retrieve', label: 'Retriever', sublabel: 'site corpus', kind: 'tool', column: 2, row: 0 },
         { id: 'github', label: 'GitHub tool', sublabel: 'live repos', kind: 'tool', column: 2, row: 1 },

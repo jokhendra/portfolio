@@ -232,6 +232,106 @@
   .scrollbar-slim::-webkit-scrollbar-thumb {
     background: var(--line-strong);
   }
+
+  /* Groot chat answers — Markdown rendered, not raw asterisks */
+  .agent-md {
+    color: var(--ink);
+  }
+
+  .agent-md__p {
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  .agent-md__p + .agent-md__p,
+  .agent-md__p + .agent-md__ul,
+  .agent-md__p + .agent-md__ol,
+  .agent-md__ul + .agent-md__p,
+  .agent-md__ol + .agent-md__p {
+    margin-top: 0.85rem;
+  }
+
+  .agent-md__ul,
+  .agent-md__ol {
+    margin: 0.75rem 0 0;
+    padding-left: 1.15rem;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .agent-md__li {
+    line-height: 1.6;
+    padding-left: 0.15rem;
+  }
+
+  .agent-md__li::marker {
+    color: var(--accent);
+  }
+
+  .agent-md__strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .agent-md__em {
+    font-style: italic;
+    color: var(--ink-muted);
+  }
+
+  .agent-md__a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .agent-md__a:hover {
+    opacity: 0.85;
+  }
+
+  .agent-md__inline-code {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border: 1px solid var(--line);
+    background: var(--bg-elevated);
+    color: var(--accent);
+  }
+
+  .agent-md__pre {
+    margin: 0.85rem 0 0;
+    padding: 0.85rem 1rem;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    background: var(--bg-elevated);
+  }
+
+  .agent-md__code {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--ink);
+    white-space: pre;
+  }
+
+  .agent-md__heading {
+    margin: 0.9rem 0 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .agent-md__quote {
+    margin: 0.85rem 0 0;
+    padding-left: 0.85rem;
+    border-left: 2px solid var(--accent-line);
+    color: var(--ink-muted);
+  }
+
+  .agent-md__hr {
+    margin: 1rem 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

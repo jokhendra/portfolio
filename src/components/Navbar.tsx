@@ -11,7 +11,7 @@ const navItems = [
   { name: 'Agents', id: 'agents' },
   { name: 'Backend', id: 'backend' },
   { name: 'Stack', id: 'stack' },
-  { name: 'Ask', id: 'ask' },
+  { name: 'Groot', id: 'ask' },
   { name: 'Contact', id: 'contact' },
 ];
 

@@ -7,6 +7,8 @@ export const profile = {
   name: 'Jokhendra Prajapati',
   shortName: 'Jokhendra',
   initials: 'JP',
+  /** Name of the live Ask-section portfolio agent. */
+  agentName: 'Groot',
   role: 'Senior AI & Full-Stack Engineer',
   brandLine: 'Agentic AI systems and the production backends that run them',
   supportingLine: 'LangGraph · RAG · MCP · FastAPI · Express / NestJS · WebSockets · AWS',
