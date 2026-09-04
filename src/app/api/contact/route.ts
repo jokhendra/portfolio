@@ -1,23 +1,44 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Contact from '@/models/Contact';
+import { profile } from '@/data/profile';
 
-// Simple in-memory rate limiter (per instance)
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+/**
+ * Contact intake.
+ *
+ * Responses carry a status only - never the stored document or internal error
+ * text. Spam controls are layered: honeypot field, minimum time on form, length
+ * bounds, and a per-instance rate limit.
+ */
+
+const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
+const MIN_TIME_ON_FORM_MS = 3000;
+
+/**
+ * Per-instance only: serverless deployments run several instances, so treat
+ * this as a speed bump rather than a guarantee. Durable limiting belongs in a
+ * shared store (Redis or Upstash) if abuse becomes real.
+ */
 const ipToTimestamps = new Map<string, number[]>();
 
 function getClientIp(req: Request): string {
-  const xff = req.headers.get('x-forwarded-for');
-  if (xff) return xff.split(',')[0].trim();
-  // Fallback when running locally
-  return 'local';
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.headers.get('x-real-ip') ?? 'local';
 }
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const windowStart = now - RATE_LIMIT_WINDOW_MS;
-  const timestamps = (ipToTimestamps.get(ip) || []).filter((t) => t > windowStart);
+
+  if (ipToTimestamps.size > 500) {
+    for (const [key, stamps] of ipToTimestamps) {
+      if (stamps.every((stamp) => stamp <= windowStart)) ipToTimestamps.delete(key);
+    }
+  }
+
+  const timestamps = (ipToTimestamps.get(ip) || []).filter((stamp) => stamp > windowStart);
   if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
     ipToTimestamps.set(ip, timestamps);
     return true;
@@ -27,88 +48,84 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
+const bounds = {
+  name: [2, 100],
+  subject: [5, 120],
+  message: [10, 1000],
+  company: [0, 120],
+  projectType: [0, 120],
+} as const;
+
 export async function POST(req: Request) {
   try {
-    const ip = getClientIp(req);
-    if (isRateLimited(ip)) {
+    if (isRateLimited(getClientIp(req))) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 }
       );
     }
 
-    const body = await req.json();
-    const { name, email, subject, message, companyWebsite, elapsedMs } = body as {
-      name?: string;
-      email?: string;
-      subject?: string;
-      message?: string;
-      companyWebsite?: string; // honeypot
-      elapsedMs?: number; // time on form
-    };
+    const body = (await req.json()) as Record<string, unknown>;
+    const read = (key: string) => (typeof body[key] === 'string' ? (body[key] as string).trim() : '');
 
-    // Validate required fields
+    const name = read('name');
+    const email = read('email');
+    const company = read('company');
+    const projectType = read('projectType');
+    const subject = read('subject');
+    const message = read('message');
+    const honeypot = read('companyWebsite');
+    const elapsedMs = typeof body.elapsedMs === 'number' ? body.elapsedMs : undefined;
+
     if (!name || !email || !subject || !message) {
-      return NextResponse.json(
-        { error: 'Please fill in all required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Please fill in all required fields' }, { status: 400 });
     }
 
-    // Honeypot: bots often fill hidden fields
-    if (companyWebsite && companyWebsite.trim().length > 0) {
+    if (honeypot.length > 0) {
       return NextResponse.json({ error: 'Invalid submission' }, { status: 400 });
     }
 
-    // Basic time check: submissions under 3 seconds are suspicious
-    if (typeof elapsedMs === 'number' && elapsedMs < 3000) {
+    if (typeof elapsedMs === 'number' && elapsedMs < MIN_TIME_ON_FORM_MS) {
       return NextResponse.json({ error: 'Form submitted too quickly' }, { status: 400 });
     }
 
-    // Additional validation
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!emailRegex.test(email)) {
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
       return NextResponse.json({ error: 'Please provide a valid email' }, { status: 400 });
     }
-    if (name.length < 2 || name.length > 100) {
-      return NextResponse.json({ error: 'Name must be between 2 and 100 characters' }, { status: 400 });
-    }
-    if (subject.length < 5 || subject.length > 120) {
-      return NextResponse.json({ error: 'Subject must be between 5 and 120 characters' }, { status: 400 });
-    }
-    if (message.length < 10 || message.length > 1000) {
-      return NextResponse.json({ error: 'Message must be between 10 and 1000 characters' }, { status: 400 });
+
+    for (const [field, value] of Object.entries({ name, subject, message, company, projectType })) {
+      const [min, max] = bounds[field as keyof typeof bounds];
+      if (value.length < min || value.length > max) {
+        return NextResponse.json(
+          { error: `${field} must be between ${min} and ${max} characters` },
+          { status: 400 }
+        );
+      }
     }
 
-    // If no database is configured, run in "demo" mode and still succeed
     if (!process.env.MONGODB_URI) {
-      console.warn('MONGODB_URI not set; contact form submission stored in memory (demo mode).');
+      // Demo mode: the form stays usable without a database, and nothing about
+      // the submission is echoed back to the client.
+      console.warn('[contact] MONGODB_URI not set; submission accepted without persistence.');
+      return NextResponse.json({ message: 'Message received (demo mode).' }, { status: 201 });
+    }
+
+    try {
+      await connectDB();
+      await Contact.create({ name, email, company, projectType, subject, message });
+    } catch (dbError) {
+      // A generic 500 would leave the sender thinking the message went through.
+      // Tell them it did not, and give them a route that always works.
+      console.error('[contact] persistence failed:', dbError);
       return NextResponse.json(
-        { message: 'Message received (demo mode).', contact: { name, email, subject, message } },
-        { status: 201 }
+        { error: `Your message could not be saved. Please email ${profile.email} directly.` },
+        { status: 503 }
       );
     }
 
-    // Connect to MongoDB (production mode)
-    await connectDB();
-
-    // Create new contact entry
-    const contact = await Contact.create({
-      name,
-      email,
-      subject,
-      message,
-    });
-
-    return NextResponse.json(
-      { message: 'Message sent successfully', contact },
-      { status: 201 }
-    );
-  } catch (error: any) {
-    console.error('Contact form error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Something went wrong' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Message sent successfully' }, { status: 201 });
+  } catch (error) {
+    console.error('[contact] submission failed:', error);
+    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
-} 
+}

@@ -9,46 +9,36 @@ const config = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        display: ['var(--font-display)', 'ui-sans-serif', 'sans-serif'],
+        sans: ['var(--font-sans)', 'ui-sans-serif', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
+      },
       colors: {
-        blue: {
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-        },
-        purple: {
-          600: '#9333EA',
-        },
-        gray: {
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          700: '#374151',
-          800: '#1F2937',
-          850: '#1A1F2E',
-          900: '#111827',
-        },
-      },
-      boxShadow: {
-        '3xl': '0 35px 60px -12px rgba(0, 0, 0, 0.25)',
-        '4xl': '0 50px 100px -20px rgba(0, 0, 0, 0.25)',
-      },
-      animation: {
-        'shimmer': 'shimmer 2s infinite',
-        'float': 'float 3s ease-in-out infinite',
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        // Semantic tokens defined in globals.css so both themes share one API.
+        ink: 'var(--ink)',
+        muted: 'var(--ink-muted)',
+        faint: 'var(--ink-faint)',
+        line: 'var(--line)',
+        'line-strong': 'var(--line-strong)',
+        accent: 'var(--accent)',
+        'accent-soft': 'var(--accent-soft)',
+        surface: 'var(--surface)',
+        elevated: 'var(--bg-elevated)',
+        canvas: 'var(--bg)',
       },
       keyframes: {
-        shimmer: {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(100%)' },
+        'flow-dash': {
+          from: { strokeDashoffset: '18' },
+          to: { strokeDashoffset: '0' },
         },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
+      },
+      animation: {
+        'flow-dash': 'flow-dash 1.4s linear infinite',
       },
     },
   },
   plugins: [],
 } satisfies Config
 
-export default config 
+export default config

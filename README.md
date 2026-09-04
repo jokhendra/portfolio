@@ -1,65 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Jokhendra Prajapati - Senior AI & Full-Stack Engineer portfolio
 
-## Getting Started
+A Next.js 14 (App Router) portfolio positioned around two halves of the same
+job: agentic AI systems (LangGraph, RAG, MCP) and the production backends that
+run them (FastAPI, Express / NestJS, WebSockets, AWS). The site's own agent is
+one of the case studies: it runs the same route / retrieve / tool pattern
+described in the work section.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Out-of-the-box Setup (This Portfolio)
-
-This project is pre-built to run without any mandatory configuration. Optional integrations (DB and scheduler) can be enabled via environment variables.
-
-1) Install dependencies and run:
+## Run it
 
 ```bash
 npm install
 npm run dev
 ```
 
-2) Optional configuration (copy `env.example` to `.env.local` and adjust):
+Optional configuration - copy `env.example` to `.env.local`:
 
-```bash
-# Public site URL for SEO metadata, robots and sitemap
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+| Variable | Effect when unset |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Falls back to `http://localhost:3000` for metadata, robots, sitemap and the OG image |
+| `NEXT_PUBLIC_CAL_LINK` | Schedule section is hidden entirely |
+| `MONGODB_URI` | Contact form accepts submissions in demo mode without persisting |
+| `GROQ_API_KEY` / `OPENAI_API_KEY` | Agent still routes, retrieves and answers extractively, and labels itself as retrieval-only |
+| `AGENT_MODEL` | Defaults to `llama-3.3-70b-versatile` (Groq) or `gpt-4o-mini` (OpenAI) |
 
-# Cal.com embed link (optional). Example: yourhandle/30min
-# NEXT_PUBLIC_CAL_LINK=
+## Structure
 
-# MongoDB URI (optional). If not set, contact form works in demo mode without persistence
-# MONGODB_URI=
+```
+src/
+  app/
+    page.tsx                  Section order (ids live on the sections themselves)
+    layout.tsx                Fonts, metadata, pre-paint theme script
+    opengraph-image.tsx       Social card generated from profile data (edge runtime)
+    api/agent/route.ts        Portfolio agent: router, hybrid retrieval, GitHub tool, streaming
+    api/contact/route.ts      Contact intake: honeypot, timing, bounds, rate limit
+  components/
+    Hero.tsx                  Brand-first hero with full-bleed agent graph plane
+    Expertise.tsx             Interactive capability map
+    Work.tsx                  Case study list + detail panel
+    AgentArchitecture.tsx     Reference LangGraph / MCP architecture
+    BackendPlatform.tsx       Reference backend architecture: gateways, services, queue, data, AWS
+    StackLayers.tsx           Stack grouped by layer
+    AgentConsole.tsx          Live agent UI with visible execution trace
+    ArchitectureDiagram.tsx   Shared SVG diagram engine (nodes + edges from data)
+  data/
+    profile.ts                Brand, focus areas, stack, expertise graph, agent facts
+    projects.ts               Case studies
+    agentCorpus.ts            Agent corpus derived from profile.ts + projects.ts
 ```
 
-Notes:
-- Contact form: If `MONGODB_URI` is not set, submissions will return success in demo mode (no database write).
-- Scheduler: If `NEXT_PUBLIC_CAL_LINK` is not set, the schedule section is hidden.
-- Update branding (title, descriptions, social links) in `src/app/layout.tsx`, `src/components/Contact.tsx`, and project data in `src/data/projects.ts`.
+### Content model
+
+Editing `src/data/profile.ts` or `src/data/projects.ts` updates the page **and**
+what the agent knows - `agentCorpus.ts` derives its chunks from those modules, so
+there is no second copy to keep in sync.
+
+Each case study in `projects.ts` carries `problem`, `architecture` (nodes and
+edges rendered as an SVG diagram), `decisions`, `incident`, `metrics` and
+`stackLayers`.
+
+## Before publishing
+
+The design and engineering are done; these items need your real values, and they
+are the difference between a credible senior portfolio and a template:
+
+1. **Measured metrics** - replace qualitative metrics (e.g. "Thousands", "24/7")
+   with hard numbers from production where you can defend them in an interview
+   (peak concurrent sockets, p95 chat latency, retrieval precision, cost).
+2. **Project links** - `liveUrl` / `githubUrl` in `src/data/projects.ts`. Only
+   add URLs that actually resolve. Where a project is not public, keep
+   `linkNote` instead of inventing a link.
+3. **Metrics** - any metric with `approximate: true` should be replaced with a
+   measured number or deleted. Latency, retrieval precision, cost per query,
+   and for backend work throughput and p95 latency carry the most weight in a
+   technical screen.
+4. **MCP evidence** - the site describes MCP as a tool boundary and the agent
+   demonstrates tool use. If you have an MCP server repo, add it as a case study
+   or link it from the agent case study.
+5. **Resume link** - `profile.cvUrl` currently points at a Dropbox file; confirm
+   it is the current version.
+6. **Claims** - `profile.experienceYears`, the availability copy, and the
+   backend and realtime tooling listed in `BackendPlatform.tsx` and
+   `profileFacts` (MediaSoup, Socket.IO, Django, AWS Lambda) are the
+   unverifiable statements on the site. Trim anything you would not want to be
+   interviewed on.
+
+## Notes on the agent
+
+- Route: `POST /api/agent`, streams NDJSON events (`trace`, `sources`, `mode`,
+  `token`, `done`) so the UI can render the execution path.
+- Retrieval: sparse term weighting with IDF, plus phrase and tag bonuses; "how"
+  and "why" questions bias toward architecture and decision chunks.
+- Tool: live public GitHub activity, cached for 15 minutes, with a fallback
+  answer when the API is unreachable.
+- Degradation: no model key means extractive grounded answers, labelled as such
+  in the UI rather than failing silently.
+- Abuse controls: 15 questions per 5 minutes per client, 500 character cap, and
+  history truncated to the last 6 turns.

@@ -1,431 +1,253 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  EnvelopeIcon, 
-  MapPinIcon, 
-  PaperAirplaneIcon,
-  ClockIcon,
-  ChatBubbleLeftRightIcon,
-  GlobeAltIcon,
-  ExclamationCircleIcon,
+import {
   CheckCircleIcon,
-  ShieldCheckIcon,
-  StarIcon,
-  PhoneIcon,
-  CalendarDaysIcon,
-  BoltIcon,
-  AcademicCapIcon,
-  TrophyIcon
+  EnvelopeIcon,
+  ExclamationCircleIcon,
+  MapPinIcon,
 } from '@heroicons/react/24/outline';
+import { profile } from '@/data/profile';
 
 interface FormData {
   name: string;
   email: string;
+  company: string;
+  projectType: string;
   subject: string;
   message: string;
-  preferredContact: string;
-  projectType: string;
-  timeline: string;
-  budget: string;
-  portfolio?: string;
-  company?: string;
-  companyWebsite?: string; // honeypot
+  /** Honeypot: real users never see or fill this. */
+  companyWebsite: string;
 }
 
-interface FormErrors {
-  name?: string;
-  email?: string;
-  subject?: string;
-  message?: string;
-  portfolio?: string;
-  company?: string;
-}
+type FormErrors = Partial<Record<'name' | 'email' | 'subject' | 'message', string>>;
 
 const MAX_MESSAGE_LENGTH = 1000;
 
-// Mock testimonials data - replace with real testimonials
-const testimonials = [
-  {
-    name: "Sarah Chen",
-    role: "CEO, TechVision",
-    content: "Jokhendra delivered exceptional work on our web application. Professional, timely, and exceeded our expectations.",
-    rating: 5
-  },
-  {
-    name: "Michael Rodriguez",
-    role: "CTO, DataFlow",
-    content: "Outstanding developer with great communication skills. Highly recommend for any web development project.",
-    rating: 5
-  }
-];
-
 const projectTypes = [
-  "Web Application Development",
-  "E-commerce Platform",
-  "Portfolio Website",
-  "Landing Page",
-  "API Development",
-  "Mobile App",
-  "Other"
+  'Senior AI engineering role',
+  'Agentic system build',
+  'RAG / retrieval build',
+  'AI architecture review',
+  'Full-stack product work',
+  'Something else',
 ];
 
-const timelines = [
-  "ASAP (Rush Project)",
-  "1-2 weeks",
-  "1 month",
-  "2-3 months",
-  "3+ months",
-  "Just exploring"
+const helpWith = [
+  'Designing agent graphs that survive tool failures and long conversations',
+  'Taking a RAG prototype to something you can measure and defend',
+  'Reviewing an LLM architecture before it becomes expensive to change',
+  'Shipping the whole thing: API, interface, deployment, instrumentation',
 ];
 
-const budgetRanges = [
-  "Under $1,000",
-  "$1,000 - $5,000",
-  "$5,000 - $10,000",
-  "$10,000 - $25,000",
-  "$25,000+",
-  "Let's discuss"
-];
+const emptyForm: FormData = {
+  name: '',
+  email: '',
+  company: '',
+  projectType: projectTypes[0],
+  subject: '',
+  message: '',
+  companyWebsite: '',
+};
+
+function validateField(name: string, value: string): string {
+  switch (name) {
+    case 'name':
+      return value.trim().length < 2 ? 'Please enter at least 2 characters' : '';
+    case 'email':
+      return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Please enter a valid email address' : '';
+    case 'subject':
+      return value.trim().length < 5 ? 'Please enter at least 5 characters' : '';
+    case 'message':
+      return value.trim().length < 10 ? 'Please add a little more detail' : '';
+    default:
+      return '';
+  }
+}
 
 export default function Contact() {
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    preferredContact: 'email',
-    projectType: '',
-    timeline: '',
-    budget: '',
-    portfolio: '',
-    company: '',
-    companyWebsite: ''
-  });
+  const [formData, setFormData] = useState<FormData>(emptyForm);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [startedAt, setStartedAt] = useState<number>(() => Date.now());
+  const [startedAt, setStartedAt] = useState(() => Date.now());
 
   useEffect(() => {
     setStartedAt(Date.now());
   }, []);
 
-  // Validate form fields
-  const validateField = (name: string, value: string): string => {
-    switch (name) {
-      case 'name':
-        return value.length < 2 ? 'Name must be at least 2 characters' : '';
-      case 'email':
-        return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Please enter a valid email address' : '';
-      case 'subject':
-        return value.length < 5 ? 'Subject must be at least 5 characters' : '';
-      case 'message':
-        return value.length < 10 ? 'Message must be at least 10 characters' : '';
-      case 'portfolio':
-        if (!value) return '';
-        return !/^https?:\/\/.+\..+/.test(value) ? 'Please enter a valid URL (starting with http:// or https://)' : '';
-      case 'company':
-        if (value && value.length < 2) return 'Company name must be at least 2 characters';
-        return '';
-      default:
-        return '';
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+    if (name === 'message' && value.length > MAX_MESSAGE_LENGTH) return;
+
+    setFormData((previous) => ({ ...previous, [name]: value }));
+    if (touched[name]) {
+      setFormErrors((previous) => ({ ...previous, [name]: validateField(name, value) }));
     }
   };
 
-  // Validate form on field blur
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    setFormErrors(prev => ({
-      ...prev,
-      [name]: validateField(name, value)
-    }));
+  const handleBlur = (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+    setTouched((previous) => ({ ...previous, [name]: true }));
+    setFormErrors((previous) => ({ ...previous, [name]: validateField(name, value) }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
-    const elapsedMs = Date.now() - startedAt;
 
-    // Validate all fields before submission
     const errors: FormErrors = {};
-    (Object.keys(formData) as Array<keyof FormData>).forEach(key => {
-      if (typeof formData[key] === 'string') {
-        const error = validateField(key, formData[key]);
-        if (error) errors[key as keyof FormErrors] = error;
-      }
+    (['name', 'email', 'subject', 'message'] as const).forEach((field) => {
+      const message = validateField(field, formData[field]);
+      if (message) errors[field] = message;
     });
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      setIsSubmitting(false);
-      // Focus on first error field for accessibility
-      const firstErrorField = Object.keys(errors)[0];
-      const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
-      element?.focus();
+      setTouched({ name: true, email: true, subject: true, message: true });
+      const firstError = Object.keys(errors)[0];
+      document.querySelector<HTMLElement>(`[name="${firstError}"]`)?.focus();
       return;
     }
-    
+
+    setIsSubmitting(true);
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...formData, elapsedMs }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, elapsedMs: Date.now() - startedAt }),
       });
 
-      const data = await response.json();
-
+      const data = await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong. Please try again.');
+        throw new Error(data?.error || 'Something went wrong. Please try again.');
       }
 
       setIsSubmitted(true);
-      setFormData({ 
-        name: '', 
-        email: '', 
-        subject: '', 
-        message: '', 
-        preferredContact: 'email',
-        projectType: '',
-        timeline: '',
-        budget: '',
-        portfolio: '',
-        company: '',
-        companyWebsite: ''
-      });
+      setFormData({ ...emptyForm });
       setTouched({});
       setFormErrors({});
-      
-      setTimeout(() => setIsSubmitted(false), 5000);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
-      setError(message);
-      setTimeout(() => setError(''), 5000);
+      setStartedAt(Date.now());
+      setTimeout(() => setIsSubmitted(false), 6000);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    // Prevent message from exceeding max length
-    if (name === 'message' && value.length > MAX_MESSAGE_LENGTH) {
-      return;
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // Clear error when user starts typing
-    if (touched[name]) {
-      setFormErrors(prev => ({
-        ...prev,
-        [name]: validateField(name, value)
-      }));
-    }
-  };
-
-  // Character count color
-  const getCharacterCountColor = () => {
-    const length = formData.message.length;
-    if (length > MAX_MESSAGE_LENGTH * 0.9) return 'text-red-500 dark:text-red-400';
-    if (length > MAX_MESSAGE_LENGTH * 0.7) return 'text-yellow-500 dark:text-yellow-400';
-    return 'text-gray-500 dark:text-gray-400';
-  };
+  const fieldBorder = (field: keyof FormErrors) =>
+    touched[field] && formErrors[field] ? { borderColor: 'var(--accent)' } : undefined;
 
   return (
-    <section id="contact" className="py-20 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section id="contact" className="section-band py-20 sm:py-28">
+      <div className="page-shell">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6 }}
+          className="max-w-3xl"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Let's Build Something Amazing Together
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Ready to discuss your project? I'm here to help bring your ideas to life with modern, scalable solutions.
-          </p>
+          <p className="eyebrow">Contact</p>
+          <h2 className="section-heading mt-4">Tell me what you are building</h2>
+          <p className="lede mt-5">{profile.availability.status}.</p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Enhanced Contact Information */}
+        <div className="mt-14 grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5 }}
           >
-            {/* Professional Availability Status */}
-            <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-6 rounded-2xl border border-green-200/50 dark:border-green-700/30">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-green-700 dark:text-green-400 font-semibold">Available for New Projects</span>
-              </div>
-              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                <div className="flex items-center gap-2">
-                  <BoltIcon className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  <span>Typical response: 2-6 hours</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CalendarDaysIcon className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  <span>Project start: Available immediately</span>
-                </div>
-              </div>
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full" style={{ background: 'var(--accent)', opacity: 0.5 }} />
+                <span className="relative inline-flex h-2 w-2 rounded-full" style={{ background: 'var(--accent)' }} />
+              </span>
+              <p className="mono text-[11px] uppercase tracking-[0.16em] text-accent">
+                Open to work
+              </p>
             </div>
 
-            {/* Professional Credentials */}
-            <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-200/50 dark:border-gray-700/30">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <TrophyIcon className="w-5 h-5 text-yellow-500" />
-                Professional Highlights
-              </h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <AcademicCapIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  <span className="text-gray-600 dark:text-gray-300">Full-Stack Developer</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircleIcon className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  <span className="text-gray-600 dark:text-gray-300">50+ Projects Delivered</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <StarIcon className="w-4 h-4 text-yellow-500" />
-                  <span className="text-gray-600 dark:text-gray-300">5.0 Client Rating</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BoltIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                  <span className="text-gray-600 dark:text-gray-300">React & Node.js Expert</span>
-                </div>
-              </div>
-            </div>
+            <h3 className="mt-8 text-xs uppercase tracking-[0.18em] text-faint">Where I help most</h3>
+            <ul className="mt-4 space-y-3">
+              {helpWith.map((item) => (
+                <li key={item} className="flex gap-3 text-sm leading-relaxed text-muted">
+                  <span className="mt-2 h-1 w-1 shrink-0" style={{ background: 'var(--accent)' }} />
+                  {item}
+                </li>
+              ))}
+            </ul>
 
-            {/* Contact Methods */}
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <EnvelopeIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    Email
-                  </h3>
-                  <a 
-                    href="mailto:jokhendra.prajapati@gmail.com"
-                    className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                  >
-                    jokhendra.prajapati@gmail.com
-                  </a>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Best for project inquiries and detailed discussions
-                  </p>
-                </div>
-              </div>
-
-              {/* <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <PhoneIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    Phone
-                  </h3>
-                  <a 
-                    href="tel:+91738818"
-                    className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-                  >
-                    +91 738818
-                  </a>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Available 9:00 AM - 6:00 PM IST for urgent matters
-                  </p>
-                </div>
-              </div> */}
-
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <MapPinIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    Location
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Bhopal, Madhya Pradesh, India
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Remote work worldwide • IST timezone
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Enhanced Social Links */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Connect on Social
-              </h3>
+            <dl className="mt-10 space-y-6 border-t pt-8" style={{ borderColor: 'var(--line)' }}>
               <div className="flex gap-4">
-                <motion.a
-                  href="https://github.com/jokhendra"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md"
-                  aria-label="Visit my GitHub profile"
-                >
-                  <svg className="w-6 h-6 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                  </svg>
-                </motion.a>
-                <motion.a
-                  href="https://www.linkedin.com/in/jokhendra-prajapati-560a841aa/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md"
-                  aria-label="Connect with me on LinkedIn"
-                >
-                  <svg className="w-6 h-6 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-.88-.06-1.601-1-1.601-1 0-1.15.781-1.15 1.601v5.604h-3v-11h3v1.765c.5-.8 1.6-1.1 2.5-1.1 1.9 0 3.5 1.6 3.5 5.606v6.739z"/>
-                  </svg>
-                </motion.a>
+                <EnvelopeIcon className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                <div>
+                  <dt className="mono text-[10px] uppercase tracking-wider text-faint">Email</dt>
+                  <dd className="mt-1">
+                    <a href={`mailto:${profile.email}`} className="text-sm text-ink transition-colors hover:text-accent">
+                      {profile.email}
+                    </a>
+                    <p className="mt-1 text-xs text-faint">{profile.availability.responseTime}</p>
+                  </dd>
+                </div>
               </div>
-            </div>
 
-            {/* Client Testimonials */}
-            
+              <div className="flex gap-4">
+                <MapPinIcon className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                <div>
+                  <dt className="mono text-[10px] uppercase tracking-wider text-faint">Based in</dt>
+                  <dd className="mt-1 text-sm text-ink">
+                    {profile.location}
+                    <p className="mt-1 text-xs text-faint">
+                      {profile.remote} · {profile.timezone}
+                    </p>
+                  </dd>
+                </div>
+              </div>
+            </dl>
+
+            <div className="mt-8 flex gap-3">
+              <a
+                href={profile.social.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost !px-4 !py-2 text-xs"
+              >
+                GitHub
+              </a>
+              <a
+                href={profile.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost !px-4 !py-2 text-xs"
+              >
+                LinkedIn
+              </a>
+            </div>
           </motion.div>
 
-          {/* Enhanced Contact Form */}
           <motion.form
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             onSubmit={handleSubmit}
-            className="space-y-6 bg-white dark:bg-gray-800/50 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/30"
             noValidate
-            role="form"
-            aria-labelledby="contact-form-title"
+            className="border bg-surface p-6 sm:p-8"
+            style={{ borderColor: 'var(--line)' }}
           >
-            {/* Honeypot field (hidden) */}
             <div className="sr-only" aria-hidden="true">
-              <label htmlFor="companyWebsite">Company Website</label>
+              <label htmlFor="companyWebsite">Company website</label>
               <input
                 type="text"
                 id="companyWebsite"
@@ -436,341 +258,170 @@ export default function Contact() {
                 onChange={handleChange}
               />
             </div>
-            <div className="text-center mb-6">
-              <h3 id="contact-form-title" className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Start Your Project
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Tell me about your project and I'll get back to you within 6 hours
-              </p>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="name" className="mono text-[10px] uppercase tracking-wider text-faint">
                   Name *
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    aria-required="true"
-                    aria-invalid={touched.name && formErrors.name ? 'true' : 'false'}
-                    aria-describedby={formErrors.name ? "name-error" : undefined}
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border ${
-                      touched.name && formErrors.name 
-                        ? 'border-red-500 dark:border-red-500' 
-                        : touched.name && !formErrors.name
-                        ? 'border-green-500 dark:border-green-500'
-                        : 'border-gray-300 dark:border-gray-600'
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200`}
-                    placeholder="Your full name"
-                    autoComplete="name"
-                  />
-                  {touched.name && (formErrors.name ? (
-                    <ExclamationCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-red-500" aria-hidden="true" />
-                  ) : (
-                    <CheckCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-green-500" aria-hidden="true" />
-                  ))}
-                </div>
+                <input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="name"
+                  aria-invalid={Boolean(touched.name && formErrors.name)}
+                  aria-describedby={formErrors.name ? 'name-error' : undefined}
+                  className="field mt-2"
+                  style={fieldBorder('name')}
+                />
                 {touched.name && formErrors.name && (
-                  <p className="mt-2 text-sm text-red-500" id="name-error" role="alert">
+                  <p id="name-error" role="alert" className="mt-2 text-xs" style={{ color: 'var(--accent)' }}>
                     {formErrors.name}
                   </p>
                 )}
               </div>
-              
+
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="email" className="mono text-[10px] uppercase tracking-wider text-faint">
                   Email *
                 </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    aria-required="true"
-                    aria-invalid={touched.email && formErrors.email ? 'true' : 'false'}
-                    aria-describedby={formErrors.email ? "email-error" : undefined}
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border ${
-                      touched.email && formErrors.email 
-                        ? 'border-red-500 dark:border-red-500' 
-                        : touched.email && !formErrors.email
-                        ? 'border-green-500 dark:border-green-500'
-                        : 'border-gray-300 dark:border-gray-600'
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200`}
-                    placeholder="your.email@example.com"
-                    autoComplete="email"
-                  />
-                  {touched.email && (formErrors.email ? (
-                    <ExclamationCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-red-500" aria-hidden="true" />
-                  ) : (
-                    <CheckCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-green-500" aria-hidden="true" />
-                  ))}
-                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  autoComplete="email"
+                  aria-invalid={Boolean(touched.email && formErrors.email)}
+                  aria-describedby={formErrors.email ? 'email-error' : undefined}
+                  className="field mt-2"
+                  style={fieldBorder('email')}
+                />
                 {touched.email && formErrors.email && (
-                  <p className="mt-2 text-sm text-red-500" id="email-error" role="alert">
+                  <p id="email-error" role="alert" className="mt-2 text-xs" style={{ color: 'var(--accent)' }}>
                     {formErrors.email}
                   </p>
                 )}
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Company (Optional)
+                <label htmlFor="company" className="mono text-[10px] uppercase tracking-wider text-faint">
+                  Company
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border ${
-                      touched.company && formErrors.company 
-                        ? 'border-red-500 dark:border-red-500' 
-                        : touched.company && !formErrors.company && formData.company
-                        ? 'border-green-500 dark:border-green-500'
-                        : 'border-gray-300 dark:border-gray-600'
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200`}
-                    placeholder="Your company name"
-                    autoComplete="organization"
-                  />
-                  {touched.company && formData.company && (formErrors.company ? (
-                    <ExclamationCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-red-500" aria-hidden="true" />
-                  ) : (
-                    <CheckCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-green-500" aria-hidden="true" />
-                  ))}
-                </div>
-                {touched.company && formErrors.company && (
-                  <p className="mt-2 text-sm text-red-500" role="alert">
-                    {formErrors.company}
-                  </p>
-                )}
+                <input
+                  id="company"
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  autoComplete="organization"
+                  className="field mt-2"
+                />
               </div>
 
               <div>
-                <label htmlFor="preferredContact" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Preferred Contact Method
+                <label htmlFor="projectType" className="mono text-[10px] uppercase tracking-wider text-faint">
+                  Reason
                 </label>
                 <select
-                  id="preferredContact"
-                  name="preferredContact"
-                  value={formData.preferredContact}
+                  id="projectType"
+                  name="projectType"
+                  value={formData.projectType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200"
+                  className="field mt-2"
                 >
-                  <option value="email">Email</option>
-                  <option value="phone">Phone Call</option>
-                  <option value="linkedin">LinkedIn</option>
-                  <option value="video">Video Call</option>
+                  {projectTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
-          
-            
-            <div>
-              <label htmlFor="portfolio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Current Website/Portfolio (Optional)
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <GlobeAltIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                </div>
-                <input
-                  type="url"
-                  id="portfolio"
-                  name="portfolio"
-                  value={formData.portfolio}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border ${
-                    touched.portfolio && formErrors.portfolio 
-                      ? 'border-red-500 dark:border-red-500' 
-                      : touched.portfolio && !formErrors.portfolio && formData.portfolio
-                      ? 'border-green-500 dark:border-green-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200`}
-                  placeholder="https://your-current-website.com"
-                  autoComplete="url"
-                />
-                {touched.portfolio && formData.portfolio && (formErrors.portfolio ? (
-                  <ExclamationCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-red-500" aria-hidden="true" />
-                ) : (
-                  <CheckCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-green-500" aria-hidden="true" />
-                ))}
-              </div>
-              {touched.portfolio && formErrors.portfolio && (
-                <p className="mt-2 text-sm text-red-500" role="alert">
-                  {formErrors.portfolio}
-                </p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="mt-5">
+              <label htmlFor="subject" className="mono text-[10px] uppercase tracking-wider text-faint">
                 Subject *
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  aria-required="true"
-                  aria-invalid={touched.subject && formErrors.subject ? 'true' : 'false'}
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border ${
-                    touched.subject && formErrors.subject 
-                      ? 'border-red-500 dark:border-red-500' 
-                      : touched.subject && !formErrors.subject
-                      ? 'border-green-500 dark:border-green-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200`}
-                  placeholder="Brief project summary or inquiry type"
-                />
-                {touched.subject && (formErrors.subject ? (
-                  <ExclamationCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-red-500" aria-hidden="true" />
-                ) : (
-                  <CheckCircleIcon className="absolute right-3 top-3.5 h-5 w-5 text-green-500" aria-hidden="true" />
-                ))}
-              </div>
+              <input
+                id="subject"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+                aria-invalid={Boolean(touched.subject && formErrors.subject)}
+                aria-describedby={formErrors.subject ? 'subject-error' : undefined}
+                className="field mt-2"
+                style={fieldBorder('subject')}
+              />
               {touched.subject && formErrors.subject && (
-                <p className="mt-2 text-sm text-red-500" role="alert">
+                <p id="subject-error" role="alert" className="mt-2 text-xs" style={{ color: 'var(--accent)' }}>
                   {formErrors.subject}
                 </p>
               )}
             </div>
-            
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Project Details *
+
+            <div className="mt-5">
+              <label htmlFor="message" className="mono text-[10px] uppercase tracking-wider text-faint">
+                Details *
               </label>
-              <div className="relative">
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  required
-                  aria-required="true"
-                  aria-invalid={touched.message && formErrors.message ? 'true' : 'false'}
-                  rows={5}
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border ${
-                    touched.message && formErrors.message 
-                      ? 'border-red-500 dark:border-red-500' 
-                      : touched.message && !formErrors.message
-                      ? 'border-green-500 dark:border-green-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-all duration-200 resize-vertical`}
-                  placeholder="Tell me about your project goals, requirements, and any specific features you need..."
-                />
-                {touched.message && (formErrors.message ? (
-                  <ExclamationCircleIcon className="absolute right-3 top-3 h-5 w-5 text-red-500" aria-hidden="true" />
+              <textarea
+                id="message"
+                name="message"
+                rows={6}
+                value={formData.message}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+                aria-invalid={Boolean(touched.message && formErrors.message)}
+                aria-describedby={formErrors.message ? 'message-error' : undefined}
+                placeholder="What are you building, and where does it currently break?"
+                className="field mt-2 resize-y"
+                style={fieldBorder('message')}
+              />
+              <div className="mt-2 flex items-center justify-between">
+                {touched.message && formErrors.message ? (
+                  <p id="message-error" role="alert" className="text-xs" style={{ color: 'var(--accent)' }}>
+                    {formErrors.message}
+                  </p>
                 ) : (
-                  <CheckCircleIcon className="absolute right-3 top-3 h-5 w-5 text-green-500" aria-hidden="true" />
-                ))}
-              </div>
-              {touched.message && formErrors.message && (
-                <p className="mt-2 text-sm text-red-500" role="alert">
-                  {formErrors.message}
-                </p>
-              )}
-              <div className={`mt-2 text-sm ${getCharacterCountColor()} text-right`}>
-                {formData.message.length}/{MAX_MESSAGE_LENGTH} characters
+                  <span />
+                )}
+                <span className="mono text-[10px] text-faint">
+                  {formData.message.length}/{MAX_MESSAGE_LENGTH}
+                </span>
               </div>
             </div>
 
-            {/* Privacy Notice */}
-            <div className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg flex items-start gap-3">
-              <ShieldCheckIcon className="w-5 h-5 flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <div>
-                <p className="font-medium mb-1">Your Privacy is Protected</p>
-                <p>
-                  Your information is securely processed and never shared with third parties. 
-                  By submitting this form, you agree to be contacted about your project.
-                </p>
-              </div>
-            </div>
+            <button type="submit" disabled={isSubmitting} className="btn-primary mt-6 w-full disabled:opacity-60">
+              {isSubmitting ? 'Sending…' : 'Send message'}
+            </button>
 
-            {/* Enhanced Submit Button */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              disabled={isSubmitting}
-              className={`w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-lg hover:shadow-xl ${
-                isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-              }`}
-              aria-describedby="submit-button-description"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true" />
-                  <span>Sending Your Message...</span>
-                </>
-              ) : (
-                <>
-                  <PaperAirplaneIcon className="w-5 h-5" aria-hidden="true" />
-                  <span>Send Project Details</span>
-                </>
-              )}
-            </motion.button>
-            <p id="submit-button-description" className="sr-only">
-              Submit your project details to start the conversation
-            </p>
-
-            {/* Enhanced Success/Error Messages */}
             {isSubmitted && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 justify-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800"
-                role="alert"
-                aria-live="polite"
+              <p
+                role="status"
+                className="mt-4 flex items-center gap-2 text-sm"
+                style={{ color: 'var(--accent)' }}
               >
-                <CheckCircleIcon className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
-                <div>
-                  <p className="font-medium">Message sent successfully!</p>
-                  <p className="text-sm">I'll get back to you within 6 hours with next steps.</p>
-                </div>
-              </motion.div>
+                <CheckCircleIcon className="h-5 w-5" />
+                Message sent. I will reply from {profile.email}.
+              </p>
             )}
 
             {error && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 justify-center text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800"
-                role="alert"
-                aria-live="assertive"
-              >
-                <ExclamationCircleIcon className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
-                <div>
-                  <p className="font-medium">Message failed to send</p>
-                  <p className="text-sm">{error}</p>
-                </div>
-              </motion.div>
+              <p role="alert" className="mt-4 flex items-center gap-2 text-sm text-muted">
+                <ExclamationCircleIcon className="h-5 w-5 shrink-0" style={{ color: 'var(--accent)' }} />
+                {error}
+              </p>
             )}
           </motion.form>
         </div>
       </div>
     </section>
   );
-} 
+}
