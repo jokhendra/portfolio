@@ -27,7 +27,7 @@ export const profile = {
     linkedin: 'https://www.linkedin.com/in/jokhendra-prajapati-560a841aa/',
   },
   cvUrl:
-    'https://www.dropbox.com/scl/fi/e710kdfn08r3zf8kzwacl/Jokhendra-Prajapati.pdf?rlkey=6kqrd0rwgw84aw8ssjjbiax8i&st=kb00roru&dl=0',
+    'https://www.dropbox.com/scl/fi/ikxuk36rflo44y4km9kkd/Jokhendra-Prajapati.pdf?rlkey=yizn54p7z1oqzcduxqktm1jmi&st=30l7hdce&e=1&dl=0',
 } as const;
 
 /**
