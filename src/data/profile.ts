@@ -14,9 +14,9 @@ export const profile = {
   supportingLine: 'LangGraph · RAG · MCP · FastAPI · Express / NestJS · WebSockets · AWS',
   heroSentence:
     'I build retrieval and agent systems that hold up outside a notebook, plus the Python and Node services, realtime layers and cloud infrastructure they actually run on.',
-  location: 'Bhopal, Madhya Pradesh, India',
+  location: 'Noida, Uttar Pradesh, India',
   timezone: 'IST (UTC+5:30)',
-  remote: 'Remote worldwide',
+  remote: 'Remote worldwide · Open to relocate',
   email: 'jokhendra.prajapati@gmail.com',
   experienceYears: '5+',
   availability: {
